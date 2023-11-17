@@ -3,6 +3,12 @@ import './spage.css'
 import logo from '../img/logo.jpg'
 import { Link } from 'react-router-dom'
 const Spage = () => {
+    const alertimgurl = 'http://100dayscss.com/codepen/alert.png';
+    const successimgurl = 'https://media.istockphoto.com/id/1079725292/vector/green-tick-checkmark-vector-icon-for-checkbox-marker-symbol.jpg?s=612x612&w=0&k=20&c=OvOpxX8ZFuc5NufZTJDbpwGKvgFUmfZjY68MICmEzX4=';
+    const [error, setError] = useState('hideElement');
+    const [imgerr, seterrimg] = useState(alertimgurl);
+    const [color, setcolor] = useState('#f65656');
+    const [success, setsuccess] = useState('');
     const [data, setData] = useState({
         name: "",
         email: "",
@@ -14,7 +20,7 @@ const Spage = () => {
     })
 
     const sendData = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         fetch('http://localhost:7000/auth/user/signup', {
             method: 'POST',
             headers: {
@@ -25,13 +31,19 @@ const Spage = () => {
             .then((response) => response.json())
             .then((result) => {
                 console.log(result);
+                seterrimg(alertimgurl);
+                setsuccess('');
+                setError('');
                 setValidData((preData) => ({
                     ...preData,
                     name: result.Name,
-                    email: result.Email
+                    email: result.Email,
+                    password: result.Password,
                 }));
                 if (result.message === "User Created Succesfull") {
-                    alert("User Created Succesfull");
+                    // alert("User Created Succesfull");
+                    seterrimg(successimgurl);
+                    setsuccess(result.message);
                     setData((prevData) => ({
                         ...prevData,
                         name: "",
@@ -40,7 +52,9 @@ const Spage = () => {
                     }));
                 }
                 if (result.message === "User Already exist") {
-                    alert("User Already exist");
+                    // alert("User Already exist");
+                    seterrimg(alertimgurl);
+                    setsuccess(result.message);
                 }
 
             })
@@ -78,45 +92,67 @@ const Spage = () => {
         }));
     }
     return (
-        <div>
-            <center>
-                <div className="i-1">
-                    <img src={logo} alt="X-Market.logo" width="100px" height="100px" />
-                </div>
-            </center>
-            <div className="i4">
-                <small>
-                    <div className="i2">
-                        <h1>Create account</h1>
-                        <b>Your name</b><br />
-                        <input className="i3" type="text" name='name' value={data.name} onChange={handleName} onKeyUp={(e) => e.code === "Enter" ? sendData(e) : null} />
-                        <br /><br />
-                        <div className='name-valid'>
-                            <label htmlFor="" id='name'>{validData.name}</label>
+        <>
+            <div className="container">
+                <div className="wrapperrr">
+                    <div className="frm--create-account">
+                        <h1 className="frm__title">Create Account</h1>
+                        {/* create account form starts here */}
+                        <div className="frm__create__account">
+                            <div className="frm-group">
+                                <label htmlFor="email1">Your E-Mail</label>
+                                <input type="email" id="email1" name='email' value={data.email} onChange={handleEmail} onKeyUp={(e) => e.code === "Enter" ? sendData(e) : null} placeholder="Enter your email" />
+                            </div>
+                            <div className="frm-group inline">
+                                <div className="frm-group">
+                                    <label htmlFor="nick1">Name</label>
+                                    <input type="text" id="nick1" name='name' value={data.name} onChange={handleName} onKeyUp={(e) => e.code === "Enter" ? sendData(e) : null} placeholder="Enter your name" />
+                                    {/* <div className='name-valid'>
+                                        <label htmlFor="" id='name'>{validData.name}</label>
+                                    </div> */}
+                                </div>
+                                <div className="frm-group">
+                                    <label htmlFor="pass1">Password</label>
+                                    <input type="password" id="pass1" name='password' required value={data.password} onChange={handlePassword} onKeyUp={(e) => e.code === "Enter" ? sendData(e) : null} placeholder="Enter your password" />
+                                </div>
+                            </div>
+                            <div className="frm-info">
+                                <p className="frm__txt">
+                                    By creating an account you agree to the<br />
+                                    <a href="#" className="frm__link">
+                                        Terms of Services
+                                    </a>{' '}
+                                    and{' '}
+                                    <a href="#" className="frm__link">
+                                        Privacy Policy
+                                    </a>
+                                </p>
+                            </div>
+                            <div className="frm-group">
+                                <input type="submit" className="frm__btn-primary" value="Sign Up" onClick={sendData} />
+                                <Link to='/user/login' className="loginbtn frm__btn-primary" >Log In</Link>
+                            </div>
+
                         </div>
-                        <b>Email</b><br />
-                        <input className="i3" type="email" name='email' value={data.email} onChange={handleEmail} onKeyUp={(e) => e.code === "Enter" ? sendData(e) : null} /><br /><br />
-                        <div className="name-valid">
-                            <label htmlFor="" id='email'>{validData.email}</label>
-                        </div>
-                        <b>Password</b><br />
-                        <input className="i3" type="password" name='password' value={data.password} onChange={handlePassword} onKeyUp={(e) => e.code === "Enter" ? sendData(e) : null} /><br />
-                        <small>Password must be at least 6 characters.</small><br /><br />
-                        <button className="i1"><Link to="/user/login" onClick={sendData}>Create your X-Market account</Link></button><br /><br />
-                        By continuing, you agree to X-Market's <a href="conditions.html">Conditions of Use</a> and <a href="privacy.html">Privacy Notice.</a><br /><br />
-                        <hr /><br />
-                        Already have an account?<Link to="/user/login">Sign in</Link><br /><br />
+                        {/* /.create account form starts here */}
                     </div>
-                </small>
-            </div><br />
-            <hr /><br />
-            <center>
-                <div className="i2">
-                    <pre><a href="conditions.html">Conditions of Use</a> <Link to="privacy.html">Privacy Notice</Link> <Link to="https://mail.google.com/mail/u/0/#inbox">Help</Link></pre><br />
-                    © 2023, X-Market.com, Inc. or its affiliates
                 </div>
-            </center>
-        </div>
+            </div>
+            <div className={`frame ${error}`}>
+                <div className={`modal`}>
+                    <img src={imgerr} width="44" height="38" alt="Alert" />
+                    <span className="title">{success}</span>
+                    <p>{validData.name}
+                        <br />
+                        {validData.email}
+                        <br />
+                        {validData.password}</p>
+                    <div className="button" style={imgerr == 'http://100dayscss.com/codepen/alert.png' ? { backgroundColor: '#f65656' } : { backgroundColor: 'green' }} onClick={() => { setError('hide') }}>OK</div>
+                </div>
+
+            </div>
+        </>
+
     );
 }
 

@@ -1,8 +1,14 @@
 import React, { useState } from 'react'
 import logo from '../img/logo.jpg'
 import { Link, useNavigate } from 'react-router-dom';
-
+import './login.css'
 const Lpage = () => {
+    const alertimgurl = 'http://100dayscss.com/codepen/alert.png';
+    const successimgurl = 'https://media.istockphoto.com/id/1079725292/vector/green-tick-checkmark-vector-icon-for-checkbox-marker-symbol.jpg?s=612x612&w=0&k=20&c=OvOpxX8ZFuc5NufZTJDbpwGKvgFUmfZjY68MICmEzX4=';
+    const [error, setError] = useState('hideElement');
+    const [imgerr, seterrimg] = useState(alertimgurl);
+    const [color, setcolor] = useState('#f65656');
+    const [success, setsuccess] = useState('');
     const navigate = useNavigate();
     const [data, setData] = useState({
         email: "",
@@ -46,6 +52,7 @@ const Lpage = () => {
                         }));
                     }
                     if (result.message == "Succesfull login") {
+                        setError('hideElement')
                         navigate('/');
                         SetCheckLogin(1);
                     }
@@ -78,6 +85,14 @@ const Lpage = () => {
                 password: ""
             }));
         }
+        setTimeout(() => {
+            if (CheckLogin) {
+                setError('hideElement');
+            }
+            else {
+                setError('');
+            }
+        }, 250);
     }
     const handleEmail = (e) => {
         // console.log(e.target.value);
@@ -95,44 +110,46 @@ const Lpage = () => {
         }));
     }
     return (
-        <div>
-            <center>
-                <div className="i-1">
-                    <img src={logo} alt="X-Market.logo" width="100px" height="100px" />
-                </div>
-            </center>
-            <div className="i0">
-                <small>
-                    <div className="i2">
-                        <h1>Log in</h1>
-                        <b>Email or mobile phone number</b><br />
-                        <i className='bx bxs-user'><input className="i3" type="text" onChange={handleEmail} value={data.email} onKeyUp={(e) => e.code === "Enter" ? sendData(e) : null} /></i>
-                        <br /><br />
-                        <div className="name-valid">
-                            <label htmlFor="">{validData.email}</label>
+        <>
+            <div className="container">
+                <div className="wrapperrr">
+                    <div className="frm--create-account" style={{ width: "400px" }}>
+                        <h1 className="frm__title">Log in </h1>
+                        {/* create account form starts here */}
+                        <div className="frm__create__account">
+                            <div className="frm-group">
+                                <label htmlFor="email1">Your E-Mail</label>
+                                <input type="email" id="email1" name='email' value={data.email} onChange={handleEmail} onKeyUp={(e) => e.code === "Enter" ? sendData(e) : null} placeholder="Enter your email" />
+                            </div>
+                            <div className="frm-group inline">
+                                <div className="frm-group">
+                                    <label htmlFor="pass1">Password</label>
+                                    <input type="password" id="pass1" name='password' required value={data.password} onChange={handlePassword} onKeyUp={(e) => e.code === "Enter" ? sendData(e) : null} placeholder="Enter your password" />
+                                </div>
+                            </div>
+                            <div className="frm-group">
+                                <input type="submit" className="frm__btn-primary" value="Log in" onClick={sendData} />
+                                <Link to='/user/signup' className="loginbtn frm__btn-primary" >Sign up</Link>
+                            </div>
+
                         </div>
-                        <b>Password</b><br />
-                        <input className="i3" type="password" onChange={handlePassword} value={data.password} onKeyUp={(e) => e.code === "Enter" ? sendData(e) : null} /><br /><br />
-                        <div className="name-valid">
-                            <label htmlFor="">{validData.password}</label>
-                        </div>
-                        <button className="i1" type="button" onClick={sendData}>Log in</button><br /><br />
-                        By continuing, you agree to X-Market's <a href="conditions.html">Conditions of Use</a> and <a href="privacy.html">Privacy Notice.</a><br /><br />
-                        <input type="checkbox" />Keep me login.<br />
-                        <hr />New to X-Market?<br /><br />
-                        <button className="i1"><Link to="/user/signup">Create your X-Market account</Link></button>
+                        {/* /.create account form starts here */}
                     </div>
-                </small>
-            </div><br />
-            <hr /><br />
-            <center>
-                <div className="i2">
-                    <pre><a href="conditions.html">Conditions of Use</a> <a href="privacy.html">Privacy Notice</a> <a href="https://mail.google.com/mail/u/0/#inbox">Help</a></pre><br />
-                    © 2023, X-Market.com, Inc. or its affiliates
                 </div>
-            </center>
-            {CheckLogin}
-        </div>
+            </div>
+            <div className={`frame ${error}`}>
+                <div className={`modal`}>
+                    <img src={imgerr} width="44" height="38" alt="Alert" />
+                    <span className="title">{success}</span>
+                    <p>{validData.name}
+                        <br />
+                        {validData.email}
+                        <br />
+                        {validData.password}</p>
+                    <div className="button" style={imgerr == 'http://100dayscss.com/codepen/alert.png' ? { backgroundColor: '#f65656' } : { backgroundColor: 'green' }} onClick={() => { setError('hide') }}>OK</div>
+                </div>
+            </div>
+        </>
     );
 }
 
