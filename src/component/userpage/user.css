@@ -1,0 +1,40 @@
+.box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    /* border: 2px solid black; */
+}
+
+.img {
+    text-align: center;
+}
+
+.img img {
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-text {
+    margin-top: 20px;
+}
+
+.profile-text>h2 {
+    font-weight: 450;
+}
+
+.address>h2 {
+    font-weight: 450;
+
+}
+
+.address {
+    margin-top: 20px;
+}
+
+.addre {
+    width: 250px;
+    /* border: 2px solid black; */
+}

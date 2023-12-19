@@ -161,3 +161,7 @@ body {
 .product-grid__view:hover {
     background: #fff;
 }
+
+.content {
+    width: 100vw;
+}

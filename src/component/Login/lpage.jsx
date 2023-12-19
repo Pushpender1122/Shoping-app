@@ -30,10 +30,12 @@ const Lpage = () => {
             }));
             fetch('http://localhost:7000/auth/user/login', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ data }),
+
             })
                 .then((response) => response.json())
                 .then((result) => {

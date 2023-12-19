@@ -24,6 +24,33 @@ const Productde = () => {
                 console.log(+ err);
             })
     }, [])
+    const addedToCart = (value) => {
+        try {
+            // Retrieve existing cart items from localStorage
+            let CartList = JSON.parse(localStorage.getItem('CartList')) || [];
+
+            // Check if the item is already in the cart
+            const existingItem = CartList.find(item => item.id === value);
+
+            if (existingItem) {
+                // If the item exists, increment its quantity
+                existingItem.numberOfItems++;
+            } else {
+                // If the item doesn't exist, add it to the cart
+                const productobj = {
+                    id: value,
+                    numberOfItems: 1
+                }
+                CartList.push(productobj);
+            }
+
+            // Store the updated cart back into localStorage
+            localStorage.setItem('CartList', JSON.stringify(CartList));
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <>
             <Header />
@@ -42,7 +69,7 @@ const Productde = () => {
 
                         <p className="ppp">{value.Description}</p>
                         <div className="cta">
-                            <div className="btn btn_primary">add to cart</div>
+                            <div className="btn btn_primary" onClick={() => { addedToCart(value._id) }}>add to cart</div>
                             <div className="btn btn_outline_secondary">
                                 <span className="material-symbols-outlined">favorite</span>add to wishlist</div>
                         </div>

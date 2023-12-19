@@ -58,7 +58,6 @@ const Feed = () => {
                                 </div>
                             </div>
                         })}
-
                         {/* end Single product */}
                         {/* Repeat the above structure for each product */}
                     </div>
