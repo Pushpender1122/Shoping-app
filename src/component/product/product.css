@@ -152,6 +152,7 @@
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    mix-blend-mode: multiply;
 }
 
 .product_details {

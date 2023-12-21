@@ -41,7 +41,7 @@ const Feed = () => {
                                         />
                                     </div>
                                     <span className="product-grid__title">{value?.ProductName}</span>
-                                    <span className="product-grid__price">{value?.ProductPrice}$</span>
+                                    <span className="product-grid__price">{value?.ProductPrice}₹</span>
                                     <div className="product-grid__extend-wrapper">
                                         <div className="product-grid__extend">
                                             <p className="product-grid__description">
