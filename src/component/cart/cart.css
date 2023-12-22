@@ -81,7 +81,8 @@
 } */
 
 .h1 {
-    font-weight: 100;
+    font-weight: 100 !important;
+    font-size: xx-large;
 
 }
 

@@ -6,7 +6,8 @@ import { BiCart } from 'react-icons/bi'
 import { BiUser } from 'react-icons/bi';
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { Link } from 'react-router-dom'
-import styles from './header.module.css'
+
+
 import './header.css'
 const Header = () => {
     const navigate = useNavigate();
@@ -15,13 +16,7 @@ const Header = () => {
     }
     return (
         <header>
-            {/* contact content */}
-            <div className="header-content-top">
-                <div className="content">
-                    <span><i className="fas fa-phone-square-alt"></i> (+91)9467592957</span>
-                    <span><i className="fas fa-envelope-square"></i>spiderj2021@gmail.com</span>
-                </div>
-            </div>
+
             {/* / contact content */}
             <div className="containerr">
                 {/* logo */}
@@ -38,6 +33,7 @@ const Header = () => {
                     </div>
                 </label>
                 {/* // search */}
+
                 <nav className="nav-content">
                     {/* nav */}
                     <ul className="nav-content-list">
@@ -82,8 +78,6 @@ const Header = () => {
                                         <li className="category-second-item"><a href="#">Galaxy M </a></li>
                                         <li className="category-second-item"><a href="#">Huaway P30 </a></li>
                                     </ul>
-
-                                    <div className="img-product-menu"><img src="https://i.ibb.co/Vvndkmy/banner.jpg" alt="Product Banner" /></div>
                                 </div>
                             </li>
                             <li className="all-category-list-item"><a href="#" className="all-category-list-link">Furniture <i className="fas fa-angle-right"></i></a></li>

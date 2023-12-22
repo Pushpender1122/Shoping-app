@@ -55,25 +55,44 @@ const Productde = () => {
         <>
             <Header />
             {data.map((value, i) => {
-                return <div id="product">
-                    <img className="product_images" src={`${baseurl}${value?.img}`} alt="Product_img" />
+                return <div className='product-page-container'>
+                    <section id="product-info">
+                        <div className="item-image-parent">
 
-                    <div className="product_details">
-                        <h2>{value.ProductName}</h2>
-                        <h3>₹{value.ProductPrice}</h3>
-
-                        <div className="about">
-                            <p className="ppp">Availability :<span>{value.Stock}</span></p>
-                            <p className="ppp">Tags : <span>{value.Category[0].replace(/^\["|"\]$/g, '').split('","').join(',')}</span></p>
+                            <div className="item-image-main">
+                                {/* Main Image */}
+                                <img src={`${baseurl}${value?.img}`} alt="default" />
+                            </div>
                         </div>
+                        <div className="item-info-parent">
+                            {/* Main Info */}
+                            <div className="main-info">
+                                <h4>{value.ProductName}</h4>
+                                <div className="star-rating">
+                                    <span>★★★★</span>★
+                                </div>
+                                <p>Price: <span id="price">₹{value.ProductPrice}</span></p>
+                            </div>
+                            {/* Choose */}
+                            <div className="select-items">
 
-                        <p className="ppp">{value.Description}</p>
-                        <div className="cta">
-                            <div className="btn btn_primary" onClick={() => { addedToCart(value._id) }}>add to cart</div>
-                            <div className="btn btn_outline_secondary">
-                                <span className="material-symbols-outlined">favorite</span>add to wishlist</div>
+                                <div className="STOCK">
+                                    Stock:
+                                </div>
+                                <span className='text-green-500 text-xl mx-1'>InStock</span>
+                                <div className="description my-2">
+                                    {/* Product description */}
+                                    <p className='font-bold my-2'>Description :</p>
+                                    {value.Description}
+                                </div>
+                            </div>
+                            <div className='my-10 flex flex-col md:flex-row justify-start items-center '>
+                                <button className='mb-4 md:mb-0 md:mr-4 bg-indigo-700 hover:bg-blue-700' onClick={() => { addedToCart(value._id) }}>Add To Cart</button>
+                                <button className='mx-4 bg-indigo-700 hover:bg-blue-700'>Add To Wishlist</button>
+                            </div>
+
                         </div>
-                    </div>
+                    </section>
                 </div>
             })}
 

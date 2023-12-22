@@ -141,7 +141,7 @@ function ShoppingCart() {
 
     return (
         <>
-            {JSON.parse(localStorage.getItem('CartList')).length === 0 ? (
+            {(localStorage.getItem('CartList') === null || JSON.parse(localStorage.getItem('CartList')).length === 0) ? (
                 <EmptyCart />
             ) : (
                 <div className="shopping-cart">

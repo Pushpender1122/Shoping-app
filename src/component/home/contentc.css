@@ -19,6 +19,7 @@ body {
 .product-grid.product-grid--flexbox .product-grid__wrapper {
     display: flex;
     flex-wrap: wrap;
+    /* justify-content: center; */
 }
 
 .product-grid.product-grid--flexbox .product-grid__title {
@@ -69,6 +70,7 @@ body {
     max-width: 100%;
     height: auto;
     max-height: 100%;
+    mix-blend-mode: multiply;
 }
 
 .product-grid__title {
@@ -163,5 +165,5 @@ body {
 }
 
 .content {
-    width: 100vw;
+    width: 98vw;
 }

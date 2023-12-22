@@ -61,7 +61,7 @@ function Addprodcut() {
     };
 
     return (
-        <div>
+        <div className='divadmin'>
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <input
                     type="text"

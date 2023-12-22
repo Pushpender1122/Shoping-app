@@ -20,11 +20,18 @@ const Feed = () => {
         { setid(data) };
         navigate(`/product/:${data}`);
     }
+    function truncateText(text, maxLength) {
+        if (text.length <= maxLength) {
+            return text;
+        }
+        const truncatedText = text.slice(0, maxLength).trim();
+        return `${truncatedText.substr(0, Math.min(truncatedText.length, truncatedText.lastIndexOf(' ')))}...`;
+    }
     return (
         <div className="wrapper">
             <div className="content">
                 {/* content here */}
-                <div className="product-grid product-grid--flexbox">
+                <div className="product-grid product-grid--flexbox text-center">
                     <div className="product-grid__wrapper">
                         {/* Product list start here */}
                         {/* Single product */}
@@ -32,7 +39,7 @@ const Feed = () => {
                         {data?.map((value, i) => {
                             return <div className="product-grid__product-wrapper">
                                 <div className="product-grid__product">
-                                    <div className="product-grid__img-wrapper">
+                                    <div className="product-grid__img-wrapper flex justify-center">
                                         <img
                                             src={`${baseurl}${value?.img}`}
                                             alt="Img"
@@ -41,12 +48,11 @@ const Feed = () => {
                                         />
                                     </div>
                                     <span className="product-grid__title">{value?.ProductName}</span>
-                                    <span className="product-grid__price">{value?.ProductPrice}₹</span>
+                                    <span className="product-grid__price">₹{value?.ProductPrice}</span>
                                     <div className="product-grid__extend-wrapper">
                                         <div className="product-grid__extend">
                                             <p className="product-grid__description">
-                                                {value?.Description}
-                                            </p>
+                                                {truncateText(value?.Description, 60)}                                            </p>
                                             <span className="product-grid__btn product-grid__add-to-cart">
                                                 <i className="fa fa-cart-arrow-down"></i> Add to cart
                                             </span>
