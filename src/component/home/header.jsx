@@ -1,10 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'
 import img from '../img/logo.jpg'
-import { PiMagnifyingGlassBold } from 'react-icons/pi'
-import { BiCart } from 'react-icons/bi'
-import { BiUser } from 'react-icons/bi';
-import { GiHamburgerMenu } from 'react-icons/gi'
+// import { PiMagnifyingGlassBold } from 'react-icons/pi'
+// import { BiCart } from 'react-icons/bi'
+// import { BiUser } from 'react-icons/bi';
+// import { GiHamburgerMenu } from 'react-icons/gi'
 import { Link } from 'react-router-dom'
 
 

@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './cart.css'
 import './empty.css'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function EmptyCart() {
     return (
         <div className="empty-cart">
-            <svg viewBox="656 573 264 182" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
+            <svg className='svgg' viewBox="656 573 264 182" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
                 <rect id="bg-line" stroke="none" fillOpacity="0.2" fill="#FFE100" fillRule="evenodd" x="656" y="624" width="206" height="38" rx="19"></rect>
                 <rect id="bg-line" stroke="none" fillOpacity="0.2" fill="#FFE100" fillRule="evenodd" x="692" y="665" width="192" height="29" rx="14.5"></rect>
                 <rect id="bg-line" stroke="none" fillOpacity="0.2" fill="#FFE100" fillRule="evenodd" x="678" y="696" width="192" height="33" rx="16.5"></rect>
@@ -65,6 +67,17 @@ function ShoppingCart() {
     const baseurl = 'http://localhost:7000/';
     const [cartItem, setCartItems] = useState([]);
     const [data, setData] = useState([]);
+    const notify = () => {
+        toast.info('Product delete from Cart', {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
+    };
     useEffect(() => {
         const fetchCartItems = () => {
             const storedCartItems = JSON.parse(localStorage.getItem('CartList'));
@@ -172,7 +185,7 @@ function ShoppingCart() {
                                 />
                             </div>
                             <div className="product-removal">
-                                <button className="remove-product" onClick={(e) => handleProductDelete(value._id)}>Remove</button>
+                                <button className="remove-product" onClick={(e) => { handleProductDelete(value._id); notify() }}>Remove</button>
                             </div>
                             <div className="product-line-price">{value?.ProductPrice * cartItem.find(item => item.id === value._id)?.numberOfItems || 1}</div>
                         </div>
@@ -191,9 +204,9 @@ function ShoppingCart() {
                             <div className="totals-value" id="cart-total">{grandTotal()}</div>
                         </div>
                     </div>
-
                     <button className="checkout">Checkout</button>
                 </div>)}
+            <ToastContainer />
         </>
     );
 }

@@ -3,12 +3,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import './product.css'
 import Header from '../home/header';
 import { useParams } from 'react-router-dom'
-// import { idProvider } from '../context/data';
+import Alert from '../alerts/alert';
 const Productde = () => {
     const baseurl = 'http://localhost:7000/';
     var id = useParams();
     id = id.id.replace(':', '');
     const [data, setdata] = useState([]);
+    const [showAlert, setShowAlert] = useState(false);
     useEffect(() => {
         console.log(id);
         fetch(`http://localhost:7000/product/:?id=${id}`).then((response) => response.json())
@@ -34,6 +35,7 @@ const Productde = () => {
 
             if (existingItem) {
                 // If the item exists, increment its quantity
+
                 existingItem.numberOfItems++;
             } else {
                 // If the item doesn't exist, add it to the cart
@@ -50,7 +52,13 @@ const Productde = () => {
             console.log(error);
         }
     }
-
+    const handleAlerts = () => {
+        setShowAlert(true);
+        // You might want to use setTimeout to hide the alert after a few seconds
+        setTimeout(() => {
+            setShowAlert(false);
+        }, 7000);
+    };
     return (
         <>
             <Header />
@@ -87,15 +95,14 @@ const Productde = () => {
                                 </div>
                             </div>
                             <div className='my-10 flex flex-col md:flex-row justify-start items-center '>
-                                <button className='mb-4 md:mb-0 md:mr-4 bg-indigo-700 hover:bg-blue-700' onClick={() => { addedToCart(value._id) }}>Add To Cart</button>
-                                <button className='mx-4 bg-indigo-700 hover:bg-blue-700'>Add To Wishlist</button>
+                                <button className='mb-4 md:mb-0 md:mr-4 bg-indigo-700 hover:bg-blue-700' onClick={() => { addedToCart(value._id); handleAlerts() }}>Add To Cart</button>
+                                <button className='mx-4 bg-indigo-700 hover:bg-blue-700'  >Add To Wishlist</button>
                             </div>
-
                         </div>
                     </section>
                 </div>
             })}
-
+            {showAlert && <Alert messageType={'success'} Message={'Added To cart'} />}
         </>
     );
 }
