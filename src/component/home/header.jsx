@@ -51,6 +51,7 @@ const Header = () => {
     const handleSuccessLogout = () => {
         Cookies.remove('Auth');
         Cookies.remove('UserRole');
+        Cookies.remove('UserId');
         setCookiestate(null)
         setAlertConfig({
             message: 'Logout Successfully',
@@ -64,6 +65,7 @@ const Header = () => {
     const handleFailedLogout = (message) => {
         Cookies.remove('UserRole');
         Cookies.remove('Auth');
+        Cookies.remove('UserId');
         setAlertConfig({
             message: message,
             messageType: 'error'

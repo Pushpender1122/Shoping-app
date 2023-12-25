@@ -4,6 +4,7 @@ import { idProvider } from '../context/data'
 import { useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Cookies from 'js-cookie';
 const Feed = () => {
     const { id, setid } = useContext(idProvider);
     const navigate = useNavigate();
@@ -41,31 +42,59 @@ const Feed = () => {
         const truncatedText = text.slice(0, maxLength).trim();
         return `${truncatedText.substr(0, Math.min(truncatedText.length, truncatedText.lastIndexOf(' ')))}...`;
     }
-    const addedToCart = (value) => {
+    const addToTemporaryCart = (value) => {
+        const userId = Cookies.get('UserId') || null;
         try {
-            // Retrieve existing cart items from localStorage
-            let CartList = JSON.parse(localStorage.getItem('CartList')) || [];
-            // Check if the item is already in the cart
-            const existingItem = CartList.find(item => item.id === value);
-            if (existingItem) {
-                // If the item exists, increment its quantity
+            let tempCart = JSON.parse(localStorage.getItem('TempCart')) || [];
 
+            const existingItem = tempCart.find(item => item.id === value);
+
+            if (existingItem) {
                 existingItem.numberOfItems++;
             } else {
-                // If the item doesn't exist, add it to the cart
-                const productobj = {
+                const productObj = {
                     id: value,
                     numberOfItems: 1
-                }
-                CartList.push(productobj);
+                };
+                tempCart.push(productObj);
             }
 
-            // Store the updated cart back into localStorage
-            localStorage.setItem('CartList', JSON.stringify(CartList));
+            localStorage.setItem('TempCart', JSON.stringify(tempCart));
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
-    }
+        if (userId) {
+            mergeCartsAfterLogin(userId);
+        }
+    };
+
+    // Function to merge temporary cart with user's cart after login
+    const mergeCartsAfterLogin = (userId) => {
+        try {
+            const tempCart = JSON.parse(localStorage.getItem('TempCart')) || [];
+            let userCart = JSON.parse(localStorage.getItem(`CartList_${userId}`)) || [];
+
+            // Merge tempCart items into user's cart
+            tempCart.forEach(item => {
+                const existingItem = userCart.find(uItem => uItem.id === item.id);
+
+                if (existingItem) {
+                    existingItem.numberOfItems += item.numberOfItems;
+                } else {
+                    userCart.push(item);
+                }
+            });
+
+            // Clear temporary cart after merging
+            localStorage.removeItem('TempCart');
+
+            // Update user's cart in localStorage
+            localStorage.setItem(`CartList_${userId}`, JSON.stringify(userCart));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <div className="wrapper">
             <div className="content">
@@ -91,7 +120,7 @@ const Feed = () => {
                                         <div className="product-grid__extend">
                                             <p className="product-grid__description">
                                                 {truncateText(value?.Description, 60)} </p>
-                                            <span className="product-grid__btn product-grid__add-to-cart" onClick={() => { addedToCart(value._id); notify() }}>
+                                            <span className="product-grid__btn product-grid__add-to-cart" onClick={() => { addToTemporaryCart(value._id); notify() }}>
                                                 <i className="fa fa-cart-arrow-down"></i> Add to cart
                                             </span>
                                             <span className="product-grid__btn product-grid__view" onClick={(() => sendData(value._id))}>

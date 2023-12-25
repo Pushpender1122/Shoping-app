@@ -4,6 +4,7 @@ import './product.css'
 import Header from '../home/header';
 import { useParams } from 'react-router-dom'
 import Alert from '../alerts/alert';
+import Cookies from 'js-cookie';
 const Productde = () => {
     const apiUrl = process.env.REACT_APP_SERVER_URL;
     const baseurl = apiUrl;
@@ -26,33 +27,61 @@ const Productde = () => {
                 console.log(+ err);
             })
     }, [])
-    const addedToCart = (value) => {
+    // Function to add items to temporary cart when user is not logged in
+    const addToTemporaryCart = (value) => {
+        const userId = Cookies.get('UserId') || null;
         try {
-            // Retrieve existing cart items from localStorage
-            let CartList = JSON.parse(localStorage.getItem('CartList')) || [];
+            let tempCart = JSON.parse(localStorage.getItem('TempCart')) || [];
 
-            // Check if the item is already in the cart
-            const existingItem = CartList.find(item => item.id === value);
+            const existingItem = tempCart.find(item => item.id === value);
 
             if (existingItem) {
-                // If the item exists, increment its quantity
-
                 existingItem.numberOfItems++;
             } else {
-                // If the item doesn't exist, add it to the cart
-                const productobj = {
+                const productObj = {
                     id: value,
                     numberOfItems: 1
-                }
-                CartList.push(productobj);
+                };
+                tempCart.push(productObj);
             }
 
-            // Store the updated cart back into localStorage
-            localStorage.setItem('CartList', JSON.stringify(CartList));
+            localStorage.setItem('TempCart', JSON.stringify(tempCart));
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
-    }
+        if (userId) {
+            mergeCartsAfterLogin(userId);
+        }
+    };
+
+    // Function to merge temporary cart with user's cart after login
+    const mergeCartsAfterLogin = (userId) => {
+        try {
+            const tempCart = JSON.parse(localStorage.getItem('TempCart')) || [];
+            let userCart = JSON.parse(localStorage.getItem(`CartList_${userId}`)) || [];
+
+            // Merge tempCart items into user's cart
+            tempCart.forEach(item => {
+                const existingItem = userCart.find(uItem => uItem.id === item.id);
+
+                if (existingItem) {
+                    existingItem.numberOfItems += item.numberOfItems;
+                } else {
+                    userCart.push(item);
+                }
+            });
+
+            // Clear temporary cart after merging
+            localStorage.removeItem('TempCart');
+
+            // Update user's cart in localStorage
+            localStorage.setItem(`CartList_${userId}`, JSON.stringify(userCart));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
     const handleAlerts = () => {
         setShowAlert(true);
         // You might want to use setTimeout to hide the alert after a few seconds
@@ -96,7 +125,7 @@ const Productde = () => {
                                 </div>
                             </div>
                             <div className='my-10 flex flex-col md:flex-row justify-start items-center '>
-                                <button className='mb-4 md:mb-0 md:mr-4 bg-indigo-700 hover:bg-blue-700' onClick={() => { addedToCart(value._id); handleAlerts() }}>Add To Cart</button>
+                                <button className='mb-4 md:mb-0 md:mr-4 bg-indigo-700 hover:bg-blue-700' onClick={() => { addToTemporaryCart(value._id); handleAlerts() }}>Add To Cart</button>
                                 <button className='mx-4 bg-indigo-700 hover:bg-blue-700'  >Add To Wishlist</button>
                             </div>
                         </div>

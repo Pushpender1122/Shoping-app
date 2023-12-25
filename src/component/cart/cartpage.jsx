@@ -4,6 +4,7 @@ import './cart.css'
 import './empty.css'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Cookies from 'js-cookie';
 function EmptyCart() {
     return (
         <div className="empty-cart">
@@ -69,6 +70,7 @@ function ShoppingCart() {
     const baseurl = apiUrl;
     const [cartItem, setCartItems] = useState([]);
     const [data, setData] = useState([]);
+    const [userId, setuserId] = useState(null);
     const notify = () => {
         toast.info('Product delete from Cart', {
             position: "top-right",
@@ -82,8 +84,38 @@ function ShoppingCart() {
     };
     useEffect(() => {
         const fetchCartItems = () => {
-            const storedCartItems = JSON.parse(localStorage.getItem('CartList'));
-            setCartItems(storedCartItems || []);
+            const userId = Cookies.get('UserId') || null;
+
+            if (userId) {
+                // User is logged in, fetch their cart items
+                setuserId(userId);
+                const storedUserCartItems = JSON.parse(localStorage.getItem(`CartList_${userId}`));
+                setCartItems(storedUserCartItems || []);
+
+                // Merge tempCart items into user's cart
+                const tempCart = JSON.parse(localStorage.getItem('TempCart')) || [];
+                let userCart = storedUserCartItems || [];
+
+                tempCart.forEach(item => {
+                    const existingItem = userCart.find(uItem => uItem.id === item.id);
+
+                    if (existingItem) {
+                        existingItem.numberOfItems += item.numberOfItems;
+                    } else {
+                        userCart.push(item);
+                    }
+                });
+
+                // Update user's cart in localStorage after merging
+                localStorage.setItem(`CartList_${userId}`, JSON.stringify(userCart));
+
+                // Remove the temporary cart after merging
+                localStorage.removeItem('TempCart');
+            } else {
+                // User is not logged in, fetch cart items from temporary storage
+                const storedTempCartItems = JSON.parse(localStorage.getItem('TempCart'));
+                setCartItems(storedTempCartItems || []);
+            }
         };
 
         fetchCartItems();
@@ -108,106 +140,177 @@ function ShoppingCart() {
     }, [cartItem]);
 
     const handleQuantityChange = (id, newQuantity) => {
-        const updatedItems = cartItem.map(item => {
-            if (item.id === id) {
-                return { ...item, numberOfItems: newQuantity };
+        const userId = Cookies.get('UserId') || null;
+
+        if (userId) {
+            // User is logged in
+            const updatedUserItems = cartItem.map(item => {
+                if (item.id === id) {
+                    return { ...item, numberOfItems: newQuantity };
+                }
+                return item;
+            });
+
+            const stockAvailable = data.find(element => element._id === id)?.Stock || 0;
+
+            if (stockAvailable >= newQuantity) {
+                localStorage.setItem(`CartList_${userId}`, JSON.stringify(updatedUserItems));
+                setCartItems(updatedUserItems);
+            } else {
+                alert("Product out of stock");
             }
-            return item;
-        });
-
-        const stockAvailable = data.find(element => element._id === id)?.Stock || 0;
-
-        if (stockAvailable >= newQuantity) {
-            localStorage.setItem('CartList', JSON.stringify(updatedItems));
-            setCartItems(updatedItems);
         } else {
-            alert("Product out of stock");
+            // User is not logged in, updating temporary cart
+            const updatedTempItems = cartItem.map(item => {
+                if (item.id === id) {
+                    return { ...item, numberOfItems: newQuantity };
+                }
+                return item;
+            });
+
+            const stockAvailable = data.find(element => element._id === id)?.Stock || 0;
+
+            if (stockAvailable >= newQuantity) {
+                localStorage.setItem('TempCart', JSON.stringify(updatedTempItems));
+                setCartItems(updatedTempItems);
+            } else {
+                alert("Product out of stock");
+            }
         }
     };
 
     const handleProductDelete = (id) => {
-        const updatedCart = cartItem.filter((item) => item.id !== id);
-        console.log(updatedCart);
-        setCartItems(updatedCart);
-        localStorage.setItem('CartList', JSON.stringify(updatedCart));
+        const userId = Cookies.get('UserId') || null;
+
+        if (userId) {
+            // User is logged in
+            const updatedUserCart = cartItem.filter(item => item.id !== id);
+
+            localStorage.setItem(`CartList_${userId}`, JSON.stringify(updatedUserCart));
+            setCartItems(updatedUserCart);
+        } else {
+            // User is not logged in, updating temporary cart
+            const updatedTempCart = cartItem.filter(item => item.id !== id);
+
+            localStorage.setItem('TempCart', JSON.stringify(updatedTempCart));
+            setCartItems(updatedTempCart);
+        }
     };
+
     const calculateTotal = () => {
+        const userId = Cookies.get('UserId') || null;
         let total = 0;
-        // Calculate the total based on each product's line price
-        data.forEach((value) => {
-            const item = cartItem.find((item) => item.id === value._id);
-            if (item) {
-                total += value.ProductPrice * item.numberOfItems;
-            }
-        });
+
+        if (userId) {
+            // User is logged in
+            const userCartItems = JSON.parse(localStorage.getItem(`CartList_${userId}`)) || [];
+
+            data.forEach((value) => {
+                const item = userCartItems.find((cartItem) => cartItem.id === value._id);
+                if (item) {
+                    total += value.ProductPrice * item.numberOfItems;
+                }
+            });
+        } else {
+            // User is not logged in, calculate total for temporary cart
+            const tempCartItems = JSON.parse(localStorage.getItem('TempCart')) || [];
+
+            data.forEach((value) => {
+                const item = tempCartItems.find((cartItem) => cartItem.id === value._id);
+                if (item) {
+                    total += value.ProductPrice * item.numberOfItems;
+                }
+            });
+        }
+
         return total.toFixed(2); // Convert to 2 decimal places
     };
+
     const grandTotal = () => {
+        const userId = Cookies.get('UserId') || null;
         let total = 0;
-        // Calculate the total based on each product's line price
-        data.forEach((value) => {
-            const item = cartItem.find((item) => item.id === value._id);
-            if (item) {
-                total += value.ProductPrice * item.numberOfItems;
-            }
-        });
-        return (total + 30).toFixed(2); // Convert to 2 decimal places
+
+        if (userId) {
+            // User is logged in
+            const userCartItems = JSON.parse(localStorage.getItem(`CartList_${userId}`)) || [];
+
+            data.forEach((value) => {
+                const item = userCartItems.find((cartItem) => cartItem.id === value._id);
+                if (item) {
+                    total += value.ProductPrice * item.numberOfItems;
+                }
+            });
+        } else {
+            // User is not logged in, calculate total for temporary cart
+            const tempCartItems = JSON.parse(localStorage.getItem('TempCart')) || [];
+
+            data.forEach((value) => {
+                const item = tempCartItems.find((cartItem) => cartItem.id === value._id);
+                if (item) {
+                    total += value.ProductPrice * item.numberOfItems;
+                }
+            });
+        }
+
+        return (total + 30).toFixed(2); // Convert to 2 decimal places and add 30 for shipping or any other fees
     };
+
 
     return (
         <>
-            {(localStorage.getItem('CartList') === null || JSON.parse(localStorage.getItem('CartList')).length === 0) ? (
-                <EmptyCart />
-            ) : (
-                <div className="shopping-cart">
-                    <h1 className='h1'>Shopping Cart</h1>
-                    <div className="column-labels">
-                        <label className="product-image label">Image</label>
-                        <label className="product-details label">Product</label>
-                        <label className="product-price label">Price</label>
-                        <label className="product-quantity label">Quantity</label>
-                        <label className="product-removal label">Remove</label>
-                        <label className="product-line-price label">Total</label>
-                    </div>
-                    {data.map((value, i) => {
-                        return <div className="product" key={i}>
-                            <div className="product-image" >
-                                <img src={`${baseurl}${value?.img}`} alt="Dingo Dog Bones" />
-                            </div>
-                            <div className="product-details">
-                                <div className="product-title">{value?.ProductName}</div>
-                                <p className="product-description">{value?.Description}</p>
-                            </div>
-                            <div className="product-price">{value?.ProductPrice}</div>
-                            <div className="product-quantity">
-                                <input
-                                    type="number"
-                                    value={cartItem.find(item => item.id === value._id)?.numberOfItems || 1}
-                                    onChange={(e) => handleQuantityChange(value._id, parseInt(e.target.value))} min="1"
-                                />
-                            </div>
-                            <div className="product-removal">
-                                <button className="remove-product" onClick={(e) => { handleProductDelete(value._id); notify() }}>Remove</button>
-                            </div>
-                            <div className="product-line-price">{value?.ProductPrice * cartItem.find(item => item.id === value._id)?.numberOfItems || 1}</div>
+            {((localStorage.getItem('TempCart') === null || JSON.parse(localStorage.getItem('TempCart')).length === 0) && (localStorage.getItem(`CartList_${userId}`) === null || JSON.parse(localStorage.getItem(`CartList_${userId}`)).length === 0))
+                ? (
+                    <EmptyCart />
+                ) : (
+                    <div className="shopping-cart">
+                        <h1 className='h1'>Shopping Cart</h1>
+                        <div className="column-labels">
+                            <label className="product-image label">Image</label>
+                            <label className="product-details label">Product</label>
+                            <label className="product-price label">Price</label>
+                            <label className="product-quantity label">Quantity</label>
+                            <label className="product-removal label">Remove</label>
+                            <label className="product-line-price label">Total</label>
                         </div>
-                    })}
-                    <div className="totals">
-                        <div className="totals-item">
-                            <label className='label'>Subtotal</label>
-                            <div className="totals-value" id="cart-subtotal">{calculateTotal()}</div>
+                        {data.map((value, i) => {
+                            return <div className="product" key={i}>
+                                <div className="product-image" >
+                                    <img src={`${baseurl}${value?.img}`} alt="Dingo Dog Bones" />
+                                </div>
+                                <div className="product-details">
+                                    <div className="product-title">{value?.ProductName}</div>
+                                    <p className="product-description">{value?.Description}</p>
+                                </div>
+                                <div className="product-price">{value?.ProductPrice}</div>
+                                <div className="product-quantity">
+                                    <input
+                                        type="number"
+                                        value={cartItem.find(item => item.id === value._id)?.numberOfItems || 1}
+                                        onChange={(e) => handleQuantityChange(value._id, parseInt(e.target.value))} min="1"
+                                    />
+                                </div>
+                                <div className="product-removal">
+                                    <button className="remove-product" onClick={(e) => { handleProductDelete(value._id); notify() }}>Remove</button>
+                                </div>
+                                <div className="product-line-price">{value?.ProductPrice * cartItem.find(item => item.id === value._id)?.numberOfItems || 1}</div>
+                            </div>
+                        })}
+                        <div className="totals">
+                            <div className="totals-item">
+                                <label className='label'>Subtotal</label>
+                                <div className="totals-value" id="cart-subtotal">{calculateTotal()}</div>
+                            </div>
+                            <div className="totals-item">
+                                <label className='label'>Shipping</label>
+                                <div className="totals-value" id="cart-shipping">30.00</div>
+                            </div>
+                            <div className="totals-item totals-item-total">
+                                <label className='label'>Grand Total</label>
+                                <div className="totals-value" id="cart-total">{grandTotal()}</div>
+                            </div>
                         </div>
-                        <div className="totals-item">
-                            <label className='label'>Shipping</label>
-                            <div className="totals-value" id="cart-shipping">30.00</div>
-                        </div>
-                        <div className="totals-item totals-item-total">
-                            <label className='label'>Grand Total</label>
-                            <div className="totals-value" id="cart-total">{grandTotal()}</div>
-                        </div>
-                    </div>
-                    <button className="checkout">Checkout</button>
-                </div>)}
+                        <button className="checkout">Checkout</button>
+                    </div>)}
             <ToastContainer />
         </>
     );

@@ -73,6 +73,7 @@ const Lpage = () => {
                         // setIsAuthenticated(true);
                         Cookies.set('Auth', 'Loggedin', { expires: 1 / 24 }); // 1/24 represents 1 hour (1 hour = 1/24 days)
                         Cookies.set('UserRole', result.userRole, { expires: 1 / 24 }); // 1/24 represents 1 hour (1 hour = 1/24 days)
+                        Cookies.set('UserId', result.userId, { expires: 1 / 24 }); // 1/24 represents 1 hour (1 hour = 1/24 days)
                         setError('hideElement')
                         setIsAuthenticated({
                             isAuthenticated: true,
