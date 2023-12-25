@@ -8,7 +8,8 @@ const Feed = () => {
     const { id, setid } = useContext(idProvider);
     const navigate = useNavigate();
     const [data, setdata] = useState([]);
-    const baseurl = 'http://localhost:7000/';
+    const apiUrl = process.env.REACT_APP_SERVER_URL;
+    const baseurl = apiUrl;
     const notify = () => {
         toast.success('Added to Cart', {
             position: "top-right",
@@ -21,7 +22,7 @@ const Feed = () => {
         });
     };
     useEffect(() => {
-        fetch('http://localhost:7000/productlist').then((response) => response.json())
+        fetch(`${apiUrl}productlist`).then((response) => response.json())
             .then((result) => {
                 console.log(result);
                 setdata(result);

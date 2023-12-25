@@ -64,7 +64,9 @@ function EmptyCart() {
     );
 }
 function ShoppingCart() {
-    const baseurl = 'http://localhost:7000/';
+    const apiUrl = process.env.REACT_APP_SERVER_URL;
+    console.log(apiUrl);
+    const baseurl = apiUrl;
     const [cartItem, setCartItems] = useState([]);
     const [data, setData] = useState([]);
     const notify = () => {
@@ -90,7 +92,7 @@ function ShoppingCart() {
     useEffect(() => {
         const getTheCartList = async () => {
             try {
-                const data = await axios.post('http://localhost:7000/cartList', cartItem);
+                const data = await axios.post(`${apiUrl}cartList`, cartItem);
                 setData(data.data);
                 console.log("req");
                 console.log(data.data);

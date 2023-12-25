@@ -1,19 +1,78 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import img from '../img/logo.jpg'
-// import { PiMagnifyingGlassBold } from 'react-icons/pi'
-// import { BiCart } from 'react-icons/bi'
-// import { BiUser } from 'react-icons/bi';
-// import { GiHamburgerMenu } from 'react-icons/gi'
+import axios from 'axios';
 import { Link } from 'react-router-dom'
-
-
+import Cookies from 'js-cookie';
 import './header.css'
+import Alert from '../alerts/alert';
+import { Authentication } from '../context/auth';
 const Header = () => {
+    const [cookiestate, setCookiestate] = useState(null);
+    const [showAlert, setShowAlert] = useState(false);
+    const { setIsAuthenticated } = useContext(Authentication);
+    const apiUrl = process.env.REACT_APP_SERVER_URL;
+    const [alertConfig, setAlertConfig] = useState({
+        message: '',
+        messageType: 'success'
+    });
+    useEffect(() => {
+        const cookie = Cookies.get('Auth');
+        console.log(cookie);
+        setCookiestate(cookie);
+    }, [])
     const navigate = useNavigate();
     const handleNav = () => {
         navigate('/user/login');
     }
+    const handleLogout = async () => {
+        try {
+            const cookie = Cookies.get('Auth');
+            if (cookie) {
+                const result = await axios.get(`${apiUrl}auth/user/logout`, { withCredentials: true });
+                console.log(result.data); // Logging the actual result from the server
+                if (result.data.message === "Successfully logged out") {
+                    setIsAuthenticated({
+                        isAuthenticated: false,
+                        UserRole: undefined
+                    })
+                    handleSuccessLogout();
+                } else {
+                    handleFailedLogout('Authentication Failed');
+                }
+            } else {
+                handleFailedLogout('Authentication Failed');
+            }
+        } catch (error) {
+            console.error("Logout failed:", error);
+            handleFailedLogout('Logout failed. Please try again.');
+        }
+    }
+    const handleSuccessLogout = () => {
+        Cookies.remove('Auth');
+        Cookies.remove('UserRole');
+        setCookiestate(null)
+        setAlertConfig({
+            message: 'Logout Successfully',
+            messageType: 'success'
+        });
+        setShowAlert(true);
+        setTimeout(() => {
+            navigate('/');
+        }, 3000);
+    };
+    const handleFailedLogout = (message) => {
+        Cookies.remove('UserRole');
+        Cookies.remove('Auth');
+        setAlertConfig({
+            message: message,
+            messageType: 'error'
+        });
+        setShowAlert(true);
+        setTimeout(() => {
+            navigate('/user/login');
+        }, 3000);
+    };
     return (
         <header>
 
@@ -42,13 +101,13 @@ const Header = () => {
 
                                 <input className="input-menu" id="open-menu-login-account" type="checkbox" name="menu" />
 
-                                <i className="fas fa-user-circle"></i><span className="login-text">Hello, Sign in <strong>Create Account</strong></span> <span className="item-arrow"></span>
+                                <i className="fas fa-user-circle"></i><span className="login-text"></span> <span className="item-arrow"></span>
 
                                 {/* submenu */}
                                 <ul className="login-list">
-                                    <li className="login-list-item"><Link to="/user/profile">My account</Link></li>
-                                    <li className="login-list-item"><Link to="/user/signup">Create account</Link></li>
-                                    <li className="login-list-item"><Link to="/user/login">logout</Link></li>
+                                    {cookiestate ? <li className="login-list-item"><Link to="/user/profile">My account</Link></li> : null}
+                                    {cookiestate ? null : <li className="login-list-item"><Link to="/user/signup">Create account</Link></li>}
+                                    {cookiestate ? <li className="login-list-item"><a onClick={handleLogout}>Logout</a></li> : null}
                                 </ul>
                             </label>
                         </li>
@@ -100,6 +159,7 @@ const Header = () => {
                     </ul>
                 </nav>
             </div>
+            {showAlert && <Alert messageType={alertConfig.messageType} Message={alertConfig.message} />}
         </header>
     );
 };

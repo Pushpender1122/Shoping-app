@@ -15,7 +15,7 @@ function Alert({ messageType, Message }) {
             autoClose: 2000,
             hideProgressBar: false,
             closeOnClick: true,
-            pauseOnHover: true,
+            pauseOnHover: false,
             draggable: true,
             progress: undefined,
             theme: "light",
@@ -24,15 +24,6 @@ function Alert({ messageType, Message }) {
 
     return (
         <ToastContainer
-            position="top-right"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            draggable
-            pauseOnHover
-            theme="light"
         />
     );
 }

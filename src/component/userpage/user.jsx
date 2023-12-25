@@ -5,10 +5,11 @@ import './user.css'
 const UserProfile = () => {
     const [data, setData] = useState([]);
     const [authFailed, setAuthFailed] = useState(false);
+    const apiUrl = process.env.REACT_APP_SERVER_URL;
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:7000/auth/user/profile', { withCredentials: true });
+                const response = await axios.get(`${apiUrl}auth/user/profile`, { withCredentials: true });
                 if (response.data.message === 'Authentication Failed') {
                     console.log(response.data);
                     setAuthFailed(true);

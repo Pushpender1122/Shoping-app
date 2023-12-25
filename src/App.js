@@ -7,20 +7,32 @@ import Spage from "./component/signup/spage";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import UserProfile from "./component/userpage/user";
 import CartComponent from "./component/cart/cartpage";
-
+import PrivateRoutes from "./component/private/privateRoute";
+import Protectedlogin from "./component/private/protectedlogin";
+import { useContext } from "react";
+import { Authentication } from './component/context/auth';
+import AdminprivateRoute from "./component/private/adminprivateRoute";
 function App() {
+  const { isAuthenticated } = useContext(Authentication);
+  // console.log(isAuthenticated);
   return (
     <Dataprovider>
       <div className="App">
         <BrowserRouter>
           <Routes>
             <Route exact path="/" element={<Homepage />} />
-            <Route exact path="/user/signup" element={<Spage />} />
-            <Route exact path="/user/login" element={<Lpage />} />
-            <Route exact path="/admin/addproduct" element={<Addprodcut />} />
-            <Route exact path="/product/:id" element={<Productde />} />
-            <Route exact path="/user/profile" element={<UserProfile />} />
+            <Route element={<AdminprivateRoute />}>
+              <Route exact path="/admin/addproduct" element={<Addprodcut />} />
+            </Route>
+            <Route element={<Protectedlogin />}>
+              <Route exact path="/user/signup" element={<Spage />} />
+              <Route exact path="/user/login" element={<Lpage />} />
+            </Route>
+            <Route element={<PrivateRoutes />} >
+              <Route path="/user/profile" element={<UserProfile />} />
+            </Route >
             <Route exact path="/product/cart" element={<CartComponent />} />
+            <Route exact path="/product/:id" element={<Productde />} />
           </Routes>
         </BrowserRouter>
       </div>

@@ -1,7 +1,10 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import logo from '../img/logo.jpg'
 import { Link, useNavigate } from 'react-router-dom';
 import './login.css'
+import Cookies from 'js-cookie';
+import Alert from '../alerts/alert';
+import { Authentication } from '../context/auth';
 const Lpage = () => {
     const alertimgurl = 'http://100dayscss.com/codepen/alert.png';
     const successimgurl = 'https://media.istockphoto.com/id/1079725292/vector/green-tick-checkmark-vector-icon-for-checkbox-marker-symbol.jpg?s=612x612&w=0&k=20&c=OvOpxX8ZFuc5NufZTJDbpwGKvgFUmfZjY68MICmEzX4=';
@@ -9,7 +12,11 @@ const Lpage = () => {
     const [imgerr, seterrimg] = useState(alertimgurl);
     const [color, setcolor] = useState('#f65656');
     const [success, setsuccess] = useState('');
+    const [showAlert, setShowAlert] = useState(false);
+    const { setIsAuthenticated } = useContext(Authentication);
+    const apiUrl = process.env.REACT_APP_SERVER_URL;
     const navigate = useNavigate();
+
     const [data, setData] = useState({
         email: "",
         password: ""
@@ -28,7 +35,7 @@ const Lpage = () => {
                 email: "",
                 password: ""
             }));
-            fetch('http://localhost:7000/auth/user/login', {
+            fetch(`${apiUrl}auth/user/login`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -54,9 +61,27 @@ const Lpage = () => {
                         }));
                     }
                     if (result.message == "Succesfull login") {
-                        setError('hideElement')
-                        navigate('/');
+                        // Set cookie with 1-hour expiration
                         SetCheckLogin(1);
+                        setShowAlert(true);
+                        setTimeout(() => {
+                            setData({
+                                email: '',
+                                password: ''
+                            })
+                        }, 2000);
+                        // setIsAuthenticated(true);
+                        Cookies.set('Auth', 'Loggedin', { expires: 1 / 24 }); // 1/24 represents 1 hour (1 hour = 1/24 days)
+                        Cookies.set('UserRole', result.userRole, { expires: 1 / 24 }); // 1/24 represents 1 hour (1 hour = 1/24 days)
+                        setError('hideElement')
+                        setIsAuthenticated({
+                            isAuthenticated: true,
+                            UserRole: result.userRole
+                        })
+                        setTimeout(() => {
+                            setShowAlert(false);
+                            navigate('/');
+                        }, 3000);
                     }
                 })
                 .catch((error) => {
@@ -139,7 +164,7 @@ const Lpage = () => {
                     </div>
                 </div>
             </div>
-            <div className={`frame ${error}`}>
+            {CheckLogin ? null : <div className={`frame ${error}`}>
                 <div className={`modal`}>
                     <img src={imgerr} width="44" height="38" alt="Alert" />
                     <span className="title">{success}</span>
@@ -150,7 +175,8 @@ const Lpage = () => {
                         {validData.password}</p>
                     <div className="button" style={imgerr == 'http://100dayscss.com/codepen/alert.png' ? { backgroundColor: '#f65656' } : { backgroundColor: 'green' }} onClick={() => { setError('hide') }}>OK</div>
                 </div>
-            </div>
+            </div>}
+            {showAlert && <Alert messageType={'success'} Message={'SuccessFully Login'} />}
         </>
     );
 }

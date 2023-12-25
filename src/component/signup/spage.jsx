@@ -9,6 +9,7 @@ const Spage = () => {
     const [imgerr, seterrimg] = useState(alertimgurl);
     const [color, setcolor] = useState('#f65656');
     const [success, setsuccess] = useState('');
+    const apiUrl = process.env.REACT_APP_SERVER_URL;
     const [data, setData] = useState({
         name: "",
         email: "",
@@ -21,7 +22,7 @@ const Spage = () => {
 
     const sendData = (e) => {
         // e.preventDefault();
-        fetch('http://localhost:7000/auth/user/signup', {
+        fetch(`${apiUrl}auth/user/signup`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -5,14 +5,15 @@ import Header from '../home/header';
 import { useParams } from 'react-router-dom'
 import Alert from '../alerts/alert';
 const Productde = () => {
-    const baseurl = 'http://localhost:7000/';
+    const apiUrl = process.env.REACT_APP_SERVER_URL;
+    const baseurl = apiUrl;
     var id = useParams();
     id = id.id.replace(':', '');
     const [data, setdata] = useState([]);
     const [showAlert, setShowAlert] = useState(false);
     useEffect(() => {
         console.log(id);
-        fetch(`http://localhost:7000/product/:?id=${id}`).then((response) => response.json())
+        fetch(`${apiUrl}product/:?id=${id}`).then((response) => response.json())
             .then((result) => {
                 console.log(result);
 
