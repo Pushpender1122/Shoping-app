@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Cookies from 'js-cookie';
-const Feed = () => {
+const Feed = (props) => {
     const { id, setid } = useContext(idProvider);
     const navigate = useNavigate();
     const [data, setdata] = useState([]);
@@ -27,6 +27,17 @@ const Feed = () => {
             .then((result) => {
                 console.log(result);
                 setdata(result);
+                if (props?.productList) {
+                    console.log("its run");
+                    console.log(props.productList);
+                    const wishlistProducts = result.filter(product => props.productList.find(item => item.id === product._id));
+                    console.log(wishlistProducts.length);
+                    setdata(wishlistProducts);
+                }
+                else {
+                    console.log("not run ");
+                }
+                // console.log(props)
             }).catch((err) => {
                 console.log(err);
             })
@@ -40,7 +51,7 @@ const Feed = () => {
             return text;
         }
         const truncatedText = text.slice(0, maxLength).trim();
-        return `${truncatedText.substr(0, Math.min(truncatedText.length, truncatedText.lastIndexOf(' ')))}...`;
+        return `${truncatedText?.substr(0, Math.min(truncatedText?.length, truncatedText.lastIndexOf(' ')))}...`;
     }
     const addToTemporaryCart = (value) => {
         const userId = Cookies.get('UserId') || null;

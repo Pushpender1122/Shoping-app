@@ -2,37 +2,51 @@
 import React, { useContext, useEffect, useState } from 'react';
 import './product.css'
 import Header from '../home/header';
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import Alert from '../alerts/alert';
 import Cookies from 'js-cookie';
 const Productde = () => {
     const apiUrl = process.env.REACT_APP_SERVER_URL;
     const baseurl = apiUrl;
+    const [isInWishlist, setIsInWishlist] = useState(false);
+    const [alertConfig, setAlertConfig] = useState({
+        alertMessage: "Added To Cart",
+        alertType: 'success'
+    })
+    const navigate = useNavigate();
     var id = useParams();
     id = id.id.replace(':', '');
     const [data, setdata] = useState([]);
     const [showAlert, setShowAlert] = useState(false);
     useEffect(() => {
-        console.log(id);
-        fetch(`${apiUrl}product/:?id=${id}`).then((response) => response.json())
+        // Fetch product details based on ID and set the data
+        fetch(`${apiUrl}product/:?id=${id}`)
+            .then((response) => response.json())
             .then((result) => {
-                console.log(result);
-
-                // const arrayFromKeys = Object.keys(result).map(key => result[key]);
-                // setdata(arrayFromKeys);
                 const arr = [result];
                 setdata(arr);
 
-            }).catch((err) => {
-                console.log(+ err);
+                // Check if the current product is in the wishlist
+                const userId = Cookies.get('UserId');
+                if (userId) {
+                    const wishList = JSON.parse(localStorage.getItem(`WishList_${userId}`)) || [];
+                    const existingItemIndex = wishList.findIndex(item => item.id === result._id);
+                    setIsInWishlist(existingItemIndex !== -1);
+                }
             })
-    }, [])
+            .catch((err) => {
+                console.log(err);
+            });
+    }, [id]);
     // Function to add items to temporary cart when user is not logged in
     const addToTemporaryCart = (value) => {
         const userId = Cookies.get('UserId') || null;
         try {
             let tempCart = JSON.parse(localStorage.getItem('TempCart')) || [];
-
+            setAlertConfig({
+                alertMessage: "Added To Cart",
+                alertType: 'success'
+            })
             const existingItem = tempCart.find(item => item.id === value);
 
             if (existingItem) {
@@ -89,6 +103,36 @@ const Productde = () => {
             setShowAlert(false);
         }, 7000);
     };
+    const addToWishlist = (value) => {
+        const userId = Cookies.get('UserId');
+        if (userId) {
+            const wishList = JSON.parse(localStorage.getItem(`WishList_${userId}`)) || [];
+            const existingItemIndex = wishList.findIndex(item => item.id === value);
+
+            if (existingItemIndex !== -1) {
+                // Remove item from wishlist
+                setAlertConfig({
+                    alertMessage: "Remove from whislist",
+                    alertType: 'info'
+                })
+                wishList.splice(existingItemIndex, 1);
+                setIsInWishlist(false);
+                localStorage.setItem(`WishList_${userId}`, JSON.stringify(wishList));
+            } else {
+                // Add item to wishlist
+                setAlertConfig({
+                    alertMessage: "Added To whislist",
+                    alertType: 'success'
+                })
+                const newItem = { id: value };
+                wishList.push(newItem);
+                setIsInWishlist(true);
+                localStorage.setItem(`WishList_${userId}`, JSON.stringify(wishList));
+            }
+        } else {
+            navigate('/user/login');
+        }
+    };
     return (
         <>
             <Header />
@@ -126,13 +170,13 @@ const Productde = () => {
                             </div>
                             <div className='my-10 flex flex-col md:flex-row justify-start items-center '>
                                 <button className='mb-4 md:mb-0 md:mr-4 bg-indigo-700 hover:bg-blue-700' onClick={() => { addToTemporaryCart(value._id); handleAlerts() }}>Add To Cart</button>
-                                <button className='mx-4 bg-indigo-700 hover:bg-blue-700'  >Add To Wishlist</button>
+                                <button className='mx-4 bg-indigo-700 hover:bg-blue-700' onClick={() => { addToWishlist(value._id); handleAlerts() }} >{isInWishlist ? 'Remove From Wishlist' : 'Add To Wishlist'}</button>
                             </div>
                         </div>
                     </section>
                 </div>
             })}
-            {showAlert && <Alert messageType={'success'} Message={'Added To cart'} />}
+            {showAlert && <Alert messageType={alertConfig.alertType} Message={alertConfig.alertMessage} />}
         </>
     );
 }

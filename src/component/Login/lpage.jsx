@@ -60,10 +60,10 @@ const Lpage = () => {
                             password: result.message
                         }));
                     }
-                    if (result.message == "Succesfull login") {
+                    if (result.message === "Succesfull login") {
                         // Set cookie with 1-hour expiration
+                        console.log(result.message);
                         SetCheckLogin(1);
-                        setShowAlert(true);
                         setTimeout(() => {
                             setData({
                                 email: '',
@@ -74,15 +74,17 @@ const Lpage = () => {
                         Cookies.set('Auth', 'Loggedin', { expires: 1 / 24 }); // 1/24 represents 1 hour (1 hour = 1/24 days)
                         Cookies.set('UserRole', result.userRole, { expires: 1 / 24 }); // 1/24 represents 1 hour (1 hour = 1/24 days)
                         Cookies.set('UserId', result.userId, { expires: 1 / 24 }); // 1/24 represents 1 hour (1 hour = 1/24 days)
-                        setError('hideElement')
-                        setIsAuthenticated({
-                            isAuthenticated: true,
-                            UserRole: result.userRole
-                        })
+                        setError('hideElement');
+                        setShowAlert(true);
                         setTimeout(() => {
                             setShowAlert(false);
-                            navigate('/');
-                        }, 3000);
+                            setIsAuthenticated({
+                                isAuthenticated: true,
+                                UserRole: result.userRole
+                            });
+                            // navigate('/');
+                        }, 4000);
+
                     }
                 })
                 .catch((error) => {

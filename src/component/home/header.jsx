@@ -113,7 +113,7 @@ const Header = () => {
                                 </ul>
                             </label>
                         </li>
-                        <li className="nav-content-item"><a className="nav-content-link" href="#"><i className="fas fa-heart"></i></a></li>
+                        <li className="nav-content-item"><Link className="nav-content-link" to="/user/wishlist"><i className="fas fa-heart"></i></Link></li>
                         <li className="nav-content-item"><Link className="nav-content-link" to="/product/cart"><i className="fas fa-shopping-cart"></i></Link></li>
                         {/* call to action */}
                     </ul>

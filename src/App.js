@@ -12,6 +12,7 @@ import Protectedlogin from "./component/private/protectedlogin";
 import { useContext } from "react";
 import { Authentication } from './component/context/auth';
 import AdminprivateRoute from "./component/private/adminprivateRoute";
+import Wishlist from "./component/cart/wishlist";
 function App() {
   const { isAuthenticated } = useContext(Authentication);
   // console.log(isAuthenticated);
@@ -30,6 +31,7 @@ function App() {
             </Route>
             <Route element={<PrivateRoutes />} >
               <Route path="/user/profile" element={<UserProfile />} />
+              <Route exact path="/user/wishlist" element={<Wishlist />} />
             </Route >
             <Route exact path="/product/cart" element={<CartComponent />} />
             <Route exact path="/product/:id" element={<Productde />} />
