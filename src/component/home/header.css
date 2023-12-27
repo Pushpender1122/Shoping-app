@@ -210,7 +210,7 @@ ul {
     border-bottom: 3px solid #545bc4;
     border-radius: 3px;
     box-shadow: 2px 9px 49px -17px rgba(0, 0, 0, 0.3);
-    display: none;
+    /* display: none; */
     overflow: hidden;
     position: absolute;
     right: 0;
@@ -226,6 +226,11 @@ ul {
 
 .containerr .nav-content .nav-content-list .nav-content-item .login-list .login-list-item:hover {
     background: #545bc4;
+}
+
+.login-a:hover {
+    color: #fff;
+
 }
 
 .containerr .nav-content .nav-content-list .nav-content-item .login-list .login-list-item:hover a {

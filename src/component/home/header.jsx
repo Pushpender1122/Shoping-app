@@ -11,6 +11,7 @@ const Header = () => {
     const [cookiestate, setCookiestate] = useState(null);
     const [showAlert, setShowAlert] = useState(false);
     const { setIsAuthenticated } = useContext(Authentication);
+    const [isOpen, setIsOpen] = useState(false);
     const apiUrl = process.env.REACT_APP_SERVER_URL;
     const [alertConfig, setAlertConfig] = useState({
         message: '',
@@ -20,7 +21,25 @@ const Header = () => {
         const cookie = Cookies.get('Auth');
         console.log(cookie);
         setCookiestate(cookie);
+        const handleClickOutside = (event) => {
+            const dropdown = document.querySelector('.login-list');
+            const menuCheckbox = document.getElementById('open-menu-login-account');
+            // console.log(event.target);
+            if (!menuCheckbox.contains(event.target) && !dropdown.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
     }, [])
+
+
+    const handleListClick = () => {
+        setIsOpen(!isOpen);
+    };
     const navigate = useNavigate();
     const handleNav = () => {
         navigate('/user/login');
@@ -101,15 +120,21 @@ const Header = () => {
                         <li className="nav-content-item account-login">
                             <label className="open-menu-login-account" htmlFor="open-menu-login-account">
 
-                                <input className="input-menu" id="open-menu-login-account" type="checkbox" name="menu" />
+                                <input
+                                    className="input-menu"
+                                    id="open-menu-login-account"
+                                    type="checkbox"
+                                    name="menu"
+                                    checked={isOpen}
+                                    onChange={handleListClick}
+                                />
 
                                 <i className="fas fa-user-circle"></i><span className="login-text"></span> <span className="item-arrow"></span>
-
                                 {/* submenu */}
-                                <ul className="login-list">
-                                    {cookiestate ? <li className="login-list-item"><Link to="/user/profile">My account</Link></li> : null}
-                                    {cookiestate ? null : <li className="login-list-item"><Link to="/user/signup">Create account</Link></li>}
-                                    {cookiestate ? <li className="login-list-item"><a onClick={handleLogout}>Logout</a></li> : null}
+                                <ul className={`login-list ${isOpen ? '' : 'hidden'}`}>
+                                    {cookiestate ? <Link className='login-a' to="/user/profile"><li className="login-list-item">My account</li></Link> : null}
+                                    {cookiestate ? null : <Link className='login-a' to="/user/signup"><li className="login-list-item">Create account</li></Link>}
+                                    {cookiestate ? <Link className='login-a' onClick={handleLogout}><li className="login-list-item">Logout</li></Link> : null}
                                 </ul>
                             </label>
                         </li>

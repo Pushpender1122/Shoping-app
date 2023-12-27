@@ -13,6 +13,7 @@ import { useContext } from "react";
 import { Authentication } from './component/context/auth';
 import AdminprivateRoute from "./component/private/adminprivateRoute";
 import Wishlist from "./component/cart/wishlist";
+import Page404 from "./component/404/page404";
 function App() {
   const { isAuthenticated } = useContext(Authentication);
   // console.log(isAuthenticated);
@@ -35,6 +36,7 @@ function App() {
             </Route >
             <Route exact path="/product/cart" element={<CartComponent />} />
             <Route exact path="/product/:id" element={<Productde />} />
+            <Route path="*" element={<Page404 />}></Route>
           </Routes>
         </BrowserRouter>
       </div>
