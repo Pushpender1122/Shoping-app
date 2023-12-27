@@ -5,12 +5,16 @@ import { useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Cookies from 'js-cookie';
+import { SerachlistProvider } from '../context/serchContext';
+import Wishlist from '../cart/wishlist';
 const Feed = (props) => {
     const { id, setid } = useContext(idProvider);
     const navigate = useNavigate();
     const [data, setdata] = useState([]);
+    const [storedData, setStoredData] = useState([]);
     const apiUrl = process.env.REACT_APP_SERVER_URL;
     const baseurl = apiUrl;
+    const { serachList } = useContext(SerachlistProvider);
     const notify = () => {
         toast.success('Added to Cart', {
             position: "top-right",
@@ -27,12 +31,15 @@ const Feed = (props) => {
             .then((result) => {
                 console.log(result);
                 setdata(result);
+                setStoredData(result);
                 if (props?.productList) {
                     console.log("its run");
                     console.log(props.productList);
                     const wishlistProducts = result.filter(product => props.productList.find(item => item.id === product._id));
                     console.log(wishlistProducts.length);
+                    setStoredData(wishlistProducts);
                     setdata(wishlistProducts);
+
                 }
                 else {
                     console.log("not run ");
@@ -42,6 +49,14 @@ const Feed = (props) => {
                 console.log(err);
             })
     }, [])
+    useEffect(() => {
+        const filteredData = storedData?.filter((value) => {
+            // Check if the ProductName includes the search query (case-insensitive)
+            return value.ProductName.toLowerCase().includes(serachList.toLowerCase());
+        });
+        setdata(filteredData)
+    }, [serachList]);
+
     const sendData = (data) => {
         { setid(data) };
         navigate(`/product/:${data}`);

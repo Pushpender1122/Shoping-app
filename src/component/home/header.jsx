@@ -7,11 +7,15 @@ import Cookies from 'js-cookie';
 import './header.css'
 import Alert from '../alerts/alert';
 import { Authentication } from '../context/auth';
+import { SerachlistProvider } from '../context/serchContext';
+
 const Header = () => {
     const [cookiestate, setCookiestate] = useState(null);
     const [showAlert, setShowAlert] = useState(false);
     const { setIsAuthenticated } = useContext(Authentication);
     const [isOpen, setIsOpen] = useState(false);
+
+    const { serachList, setSearchList } = useContext(SerachlistProvider);
     const apiUrl = process.env.REACT_APP_SERVER_URL;
     const [alertConfig, setAlertConfig] = useState({
         message: '',
@@ -109,7 +113,7 @@ const Header = () => {
                     <input className="input-open-search" id="open-search" type="checkbox" name="menu" />
                     <div className="search">
                         <button className="button-search"><i className="fas fa-search"></i></button>
-                        <input type="text" placeholder="What are you looking for?" className="input-search" />
+                        <input type="text" placeholder="What are you looking for?" className="input-search" value={serachList} onChange={(e) => setSearchList(e.target.value)} />
                     </div>
                 </label>
                 {/* // search */}

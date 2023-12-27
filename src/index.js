@@ -4,10 +4,13 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Auth from './component/context/auth';
+import SearchContext from './component/context/serchContext';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Auth>
-    <App />
+    <SearchContext>
+      <App />
+    </SearchContext>
   </Auth>
 );
 
