@@ -100,7 +100,7 @@ const Header = () => {
             {/* / contact content */}
             <div className="containerr">
                 {/* logo */}
-                <strong className="logo"><i className="fas fa-heart"></i></strong>
+                <Link to={'/'}> <strong className="logo"><i className="fas fa-heart"></i></strong></Link>
                 {/* open nav mobile */}
 
                 {/*search */}

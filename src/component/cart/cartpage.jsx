@@ -5,6 +5,7 @@ import './empty.css'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Cookies from 'js-cookie';
+import Header from '../home/header';
 function EmptyCart() {
     return (
         <div className="empty-cart">
@@ -138,22 +139,30 @@ function ShoppingCart() {
 
         // }
     }, [cartItem]);
-
     const handleQuantityChange = (id, newQuantity) => {
         const userId = Cookies.get('UserId') || null;
 
+        // Find the item from the cart
+        const selectedItem = cartItem.find(item => item.id === id);
+        if (!selectedItem) return;
+
+        const stockAvailable = data.find(element => element._id === id)?.Stock || 1;
+
+        // Calculate the new quantity based on the change
+        const updatedQuantity = selectedItem.numberOfItems + newQuantity;
+        if (updatedQuantity <= 0) {
+            return;
+        }
         if (userId) {
             // User is logged in
-            const updatedUserItems = cartItem.map(item => {
-                if (item.id === id) {
-                    return { ...item, numberOfItems: newQuantity };
-                }
-                return item;
-            });
+            if (stockAvailable >= updatedQuantity) {
+                const updatedUserItems = cartItem.map(item => {
+                    if (item.id === id) {
+                        return { ...item, numberOfItems: updatedQuantity };
+                    }
+                    return item;
+                });
 
-            const stockAvailable = data.find(element => element._id === id)?.Stock || 0;
-
-            if (stockAvailable >= newQuantity) {
                 localStorage.setItem(`CartList_${userId}`, JSON.stringify(updatedUserItems));
                 setCartItems(updatedUserItems);
             } else {
@@ -161,16 +170,14 @@ function ShoppingCart() {
             }
         } else {
             // User is not logged in, updating temporary cart
-            const updatedTempItems = cartItem.map(item => {
-                if (item.id === id) {
-                    return { ...item, numberOfItems: newQuantity };
-                }
-                return item;
-            });
+            if (stockAvailable >= updatedQuantity) {
+                const updatedTempItems = cartItem.map(item => {
+                    if (item.id === id) {
+                        return { ...item, numberOfItems: updatedQuantity };
+                    }
+                    return item;
+                });
 
-            const stockAvailable = data.find(element => element._id === id)?.Stock || 0;
-
-            if (stockAvailable >= newQuantity) {
                 localStorage.setItem('TempCart', JSON.stringify(updatedTempItems));
                 setCartItems(updatedTempItems);
             } else {
@@ -223,7 +230,7 @@ function ShoppingCart() {
             });
         }
 
-        return total.toFixed(2); // Convert to 2 decimal places
+        return total.toFixed(2);
     };
 
     const grandTotal = () => {
@@ -254,15 +261,22 @@ function ShoppingCart() {
 
         return (total + 30).toFixed(2); // Convert to 2 decimal places and add 30 for shipping or any other fees
     };
+    const handledescriptionLimit = (value, limit) => {
+        if (value.length <= limit) {
+            return value;
+        }
+        var text = value.slice(0, limit);
+        return text.concat(text, '...');
 
-
+    }
     return (
         <>
+            <Header />
             {((localStorage.getItem('TempCart') === null || JSON.parse(localStorage.getItem('TempCart')).length === 0) && (localStorage.getItem(`CartList_${userId}`) === null || JSON.parse(localStorage.getItem(`CartList_${userId}`)).length === 0))
                 ? (
                     <EmptyCart />
                 ) : (
-                    <div className="shopping-cart">
+                    <div className="shopping-cart mx-28">
                         <h1 className='h1'>Shopping Cart</h1>
                         <div className="column-labels">
                             <label className="product-image label">Image</label>
@@ -279,23 +293,21 @@ function ShoppingCart() {
                                 </div>
                                 <div className="product-details">
                                     <div className="product-title">{value?.ProductName}</div>
-                                    <p className="product-description">{value?.Description}</p>
+                                    <p className="product-description">{handledescriptionLimit(value?.Description, 60)}</p>
                                 </div>
                                 <div className="product-price">{value?.ProductPrice}</div>
-                                <div className="product-quantity">
-                                    <input
-                                        type="number"
-                                        value={cartItem.find(item => item.id === value._id)?.numberOfItems || 1}
-                                        onChange={(e) => handleQuantityChange(value._id, parseInt(e.target.value))} min="1"
-                                    />
+                                <div className="product-quantity ">
+                                    <span className="button bg-indigo-600 py-1 px-2 text-xl font-bold cursor-pointer" onClick={(e) => handleQuantityChange(value._id, -1)}>-</span>
+                                    <span className='product-que-span px-3  bg-slate-200'>{cartItem.find(item => item.id === value._id)?.numberOfItems || 1}</span>
+                                    <span className="button bg-indigo-600 py-1 px-2 text-xl font-bold cursor-pointer" onClick={(e) => handleQuantityChange(value._id, 1)}>+</span>
                                 </div>
-                                <div className="product-removal">
+                                <div className="product-removal pl-4">
                                     <button className="remove-product" onClick={(e) => { handleProductDelete(value._id); notify() }}>Remove</button>
                                 </div>
                                 <div className="product-line-price">{value?.ProductPrice * cartItem.find(item => item.id === value._id)?.numberOfItems || 1}</div>
                             </div>
                         })}
-                        <div className="totals">
+                        <div className="totals ">
                             <div className="totals-item">
                                 <label className='label'>Subtotal</label>
                                 <div className="totals-value" id="cart-subtotal">{calculateTotal()}</div>
@@ -309,8 +321,9 @@ function ShoppingCart() {
                                 <div className="totals-value" id="cart-total">{grandTotal()}</div>
                             </div>
                         </div>
-                        <button className="checkout">Checkout</button>
-                    </div>)}
+                        <button className="checkout my-6">Checkout</button>
+                    </div >)
+            }
             <ToastContainer />
         </>
     );
