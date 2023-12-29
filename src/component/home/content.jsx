@@ -39,7 +39,6 @@ const Feed = (props) => {
                     console.log(wishlistProducts.length);
                     setStoredData(wishlistProducts);
                     setdata(wishlistProducts);
-
                 }
                 else {
                     console.log("not run ");
@@ -122,45 +121,40 @@ const Feed = (props) => {
     };
 
     return (
-        <div className="wrapper">
-            <div className="content">
-                {/* content here */}
-                <div className="product-grid product-grid--flexbox text-center">
-                    <div className="product-grid__wrapper">
-                        {/* Product list start here */}
-                        {/* Single product */}
-                        {data?.map((value, i) => {
-                            return <div className="product-grid__product-wrapper">
-                                <div className="product-grid__product">
-                                    <div className="product-grid__img-wrapper flex justify-center">
-                                        <img
-                                            src={`${baseurl}${value?.img}`}
-                                            alt="Img"
-                                            className="product-grid__img"
-                                            onClick={(() => sendData(value._id))}
-                                        />
-                                    </div>
-                                    <span className="product-grid__title">{value?.ProductName}</span>
-                                    <span className="product-grid__price">₹{value?.ProductPrice}</span>
-                                    <div className="product-grid__extend-wrapper">
-                                        <div className="product-grid__extend">
-                                            <p className="product-grid__description">
-                                                {truncateText(value?.Description, 60)} </p>
-                                            <span className="product-grid__btn product-grid__add-to-cart" onClick={() => { addToTemporaryCart(value._id); notify() }}>
-                                                <i className="fa fa-cart-arrow-down"></i> Add to cart
-                                            </span>
-                                            <span className="product-grid__btn product-grid__view" onClick={(() => sendData(value._id))}>
-                                                <i className="fa fa-eye"></i> View more
-                                            </span>
-                                        </div>
-                                    </div>
+        <div className="product-grid product-grid--flexbox text-center">
+            <div className="product-grid__wrapper">
+                {/* Product list start here */}
+                {/* Single product */}
+                {data?.map((value, i) => {
+                    return <div className="product-grid__product-wrapper">
+                        <div className="product-grid__product">
+                            <div className="product-grid__img-wrapper flex justify-center">
+                                <img
+                                    src={`${baseurl}${value?.img}`}
+                                    alt="Img"
+                                    className="product-grid__img"
+                                    onClick={(() => sendData(value._id))}
+                                />
+                            </div>
+                            <span className="product-grid__title">{value?.ProductName}</span>
+                            <span className="product-grid__price">₹{value?.ProductPrice}</span>
+                            <div className="product-grid__extend-wrapper">
+                                <div className="product-grid__extend">
+                                    <p className="product-grid__description">
+                                        {truncateText(value?.Description, 60)} </p>
+                                    <span className="product-grid__btn product-grid__add-to-cart" onClick={() => { addToTemporaryCart(value._id); notify() }}>
+                                        <i className="fa fa-cart-arrow-down"></i> Add to cart
+                                    </span>
+                                    <span className="product-grid__btn product-grid__view" onClick={(() => sendData(value._id))}>
+                                        <i className="fa fa-eye"></i> View more
+                                    </span>
                                 </div>
                             </div>
-                        })}
-                        {/* end Single product */}
-                        {/* Repeat the above structure for each product */}
+                        </div>
                     </div>
-                </div>
+                })}
+                {/* end Single product */}
+                {/* Repeat the above structure for each product */}
             </div>
             <ToastContainer />
         </div>

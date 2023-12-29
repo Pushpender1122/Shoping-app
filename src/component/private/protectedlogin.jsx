@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 import { Authentication } from '../context/auth';
 
 const Protectedlogin = () => {

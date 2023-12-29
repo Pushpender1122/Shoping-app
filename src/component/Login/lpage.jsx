@@ -1,21 +1,21 @@
 import React, { useContext, useState } from 'react'
-import logo from '../img/logo.jpg'
-import { Link, useNavigate } from 'react-router-dom';
+// import logo from '../img/logo.jpg'
+import { Link } from 'react-router-dom';
 import './login.css'
 import Cookies from 'js-cookie';
 import Alert from '../alerts/alert';
 import { Authentication } from '../context/auth';
 const Lpage = () => {
     const alertimgurl = 'http://100dayscss.com/codepen/alert.png';
-    const successimgurl = 'https://media.istockphoto.com/id/1079725292/vector/green-tick-checkmark-vector-icon-for-checkbox-marker-symbol.jpg?s=612x612&w=0&k=20&c=OvOpxX8ZFuc5NufZTJDbpwGKvgFUmfZjY68MICmEzX4=';
+    // const successimgurl = 'https://media.istockphoto.com/id/1079725292/vector/green-tick-checkmark-vector-icon-for-checkbox-marker-symbol.jpg?s=612x612&w=0&k=20&c=OvOpxX8ZFuc5NufZTJDbpwGKvgFUmfZjY68MICmEzX4=';
     const [error, setError] = useState('hideElement');
     const [imgerr, seterrimg] = useState(alertimgurl);
-    const [color, setcolor] = useState('#f65656');
+    // const [color, setcolor] = useState('#f65656');
     const [success, setsuccess] = useState('');
     const [showAlert, setShowAlert] = useState(false);
     const { setIsAuthenticated } = useContext(Authentication);
     const apiUrl = process.env.REACT_APP_SERVER_URL;
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [data, setData] = useState({
         email: "",

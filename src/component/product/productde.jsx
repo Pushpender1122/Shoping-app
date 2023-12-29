@@ -1,5 +1,5 @@
 // Productde.jsx
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './product.css'
 import Header from '../home/header';
 import { useNavigate, useParams } from 'react-router-dom'

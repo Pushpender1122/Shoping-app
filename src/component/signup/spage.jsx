@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import './spage.css'
-import logo from '../img/logo.jpg'
+// import logo from '../img/logo.jpg'
 import { Link } from 'react-router-dom'
 const Spage = () => {
     const alertimgurl = 'http://100dayscss.com/codepen/alert.png';
     const successimgurl = 'https://media.istockphoto.com/id/1079725292/vector/green-tick-checkmark-vector-icon-for-checkbox-marker-symbol.jpg?s=612x612&w=0&k=20&c=OvOpxX8ZFuc5NufZTJDbpwGKvgFUmfZjY68MICmEzX4=';
     const [error, setError] = useState('hideElement');
     const [imgerr, seterrimg] = useState(alertimgurl);
-    const [color, setcolor] = useState('#f65656');
+    // const [color, setcolor] = useState('#f65656');
     const [success, setsuccess] = useState('');
     const apiUrl = process.env.REACT_APP_SERVER_URL;
     const [data, setData] = useState({
@@ -148,7 +148,7 @@ const Spage = () => {
                         {validData.email}
                         <br />
                         {validData.password}</p>
-                    <div className="button" style={imgerr == 'http://100dayscss.com/codepen/alert.png' ? { backgroundColor: '#f65656' } : { backgroundColor: 'green' }} onClick={() => { setError('hide') }}>OK</div>
+                    <div className="button" style={imgerr === 'http://100dayscss.com/codepen/alert.png' ? { backgroundColor: '#f65656' } : { backgroundColor: 'green' }} onClick={() => { setError('hide') }}>OK</div>
                 </div>
 
             </div>

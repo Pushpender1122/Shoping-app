@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
-import img from '../img/logo.jpg'
 import axios from 'axios';
 import { Link } from 'react-router-dom'
 import Cookies from 'js-cookie';
