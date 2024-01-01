@@ -6,28 +6,29 @@ import LoadingBar from 'react-top-loading-bar'
 import Cookies from 'js-cookie';
 import Header from '../home/header';
 import Alert from '../alerts/alert';
+import UserModal from '../model/profileedit';
 const UserProfile = () => {
     const [data, setData] = useState([]);
     const [authFailed, setAuthFailed] = useState(false);
-    const [addresses, setAddresses] = useState([
-        { id: 1, address: '123 Street, City' },
-        { id: 2, address: '456 Avenue, Town' },
-        // Add more addresses as needed
-    ]);
-    const [selectedAddress, setSelectedAddress] = useState('');
-    const [progress, setProgress] = useState(0);
-    const [showModal, setShowModal] = useState({
-        forImage: false,
-        forProfile: false,
-    });
     const [newImage, setNewImage] = useState(null);
     const [preimg, setpreimg] = useState(null);
     const [buttonState, setButtonState] = useState(true);
     const [showalert, setshowalert] = useState(false);
+    const [progress, setProgress] = useState(0);
+    const [selectedAddress, setSelectedAddress] = useState('');
+    const [fetchDependency, setfetchDependency] = useState(false);
+    const [addresses, setAddresses] = useState([]);
+    const [showModal, setShowModal] = useState({
+        forImage: false,
+        forProfile: false,
+        forAddress: false
+    });
     const [userdetails, setUserDetails] = useState({
-        name: "John Doe",
-        email: "john@example.com"
+        name: "",
+        email: "",
+        // image: null
     })
+    const [newAddress, setNewAddress] = useState({ label: '', address: '' });
     const apiUrl = process.env.REACT_APP_SERVER_URL;
     useEffect(() => {
         const fetchData = async () => {
@@ -39,6 +40,7 @@ const UserProfile = () => {
                     setAuthFailed(true);
                 } else {
                     setData(response.data.userdetails);
+                    setAddresses(response.data.userdetails.addresses);
                 }
                 console.log(response);
             } catch (error) {
@@ -46,17 +48,17 @@ const UserProfile = () => {
             }
         };
         fetchData();
-    }, [buttonState]);
+    }, [fetchDependency]);
     if (authFailed) {
-        return <Navigate to="/" />; // Redirect to another route if authentication fails
+        return <Navigate to="/" />;
     }
 
     const handleAddressChange = (e) => {
         setSelectedAddress(e.target.value);
     };
     const handleImageChange = (e) => {
-        setNewImage(e.target.files[0]);
-        const file = e.target.files[0];
+        setNewImage(e?.target?.files[0]);
+        const file = e?.target?.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -77,7 +79,7 @@ const UserProfile = () => {
             const formData = new FormData();
             formData.append('profileimage', newImage); // Assuming 'image' is the field name expected by the backend
             setProgress(50);
-            const result = await axios.post(`${apiUrl}auth/user/profile/${id}/editprofile`, formData, {
+            const result = await axios.post(`${apiUrl}auth/user/profile/${id}/edit/profileimage`, formData, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'multipart/form-data', // Set the content type to multipart/form-data for file upload
@@ -86,6 +88,12 @@ const UserProfile = () => {
             setProgress(70);
             console.log(result);
             if (result.data.message) {
+                if (fetchDependency) {
+                    setfetchDependency(false);
+                }
+                else {
+                    setfetchDependency(true);
+                }
                 setProgress(100);
                 setShowModal({
                     ...showModal,
@@ -114,22 +122,8 @@ const UserProfile = () => {
             // Handle error state or display an error message to the user
         }
     };
-    const handleDetails = (e) => {
-        console.log(e.target);
-        setUserDetails({
-            ...userdetails,
-            [e.target.name]: e.target.value
-        })
-    }
-    const handleSave = () => {
-        setShowModal({
-            ...showModal,
-            forProfile: false
-        });
-    }
     return (
         <>
-
             <Header />
             <div className="max-w-3xl mx-auto px-4 py-8">
                 {/* Profile Header */}
@@ -158,7 +152,7 @@ const UserProfile = () => {
                         <div>
                             <p><span className="font-semibold">Name:</span> {data.name}</p>
                             <p><span className="font-semibold">Email:</span> {data.email}</p>
-                            <p><span className="font-semibold">Address:</span> {data.address}</p>
+                            <p><span className="font-semibold">Address:</span> {addresses[0]?.address}</p>
                         </div>
                         {/* Edit Details Button */}
                         <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md" onClick={() => setShowModal({
@@ -180,15 +174,15 @@ const UserProfile = () => {
                             onChange={handleAddressChange}
                         >
                             <option value="">Select an address</option>
-                            {addresses.map((address) => (
-                                <option key={address.id} value={address.address}>{address.address}</option>
+                            {addresses.map((address, i) => (
+                                <option key={i} value={address.address}>{address.label}</option>
                             ))}
                         </select>
                     </div>
                     {/* Create New Address */}
                     <div>
                         <h3 className="text-lg font-semibold mb-2">Add New Address</h3>
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md">Create New Address</button>
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md" onClick={() => setShowModal({ ...showModal, forAddress: true })}>Create New Address</button>
                     </div>
                 </div>
                 {/* Order History Section */}
@@ -227,41 +221,20 @@ const UserProfile = () => {
                 </div>
             )}
             {showModal.forProfile && (
-                <div className="fixed inset-0 z-10 overflow-y-auto flex items-center justify-center">
-                    <div className="absolute inset-0 bg-gray-500 opacity-50"></div>
-                    <div className="bg-white p-6 rounded-md z-20">
-                        <h2 className="text-lg font-semibold mb-4">Edit Details</h2>
-                        <div className="mb-4">
-                            <label htmlFor="name" className="block mb-1">Name:</label>
-                            <input
-                                type="text"
-                                id="name"
-                                name='name'
-                                value={userdetails.name}
-                                onChange={handleDetails}
-                                className="border border-gray-300 rounded-md px-3 py-1 w-full"
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label htmlFor="email" className="block mb-1">Email:</label>
-                            <input
-                                type="email"
-                                name='email'
-                                id="email"
-                                value={userdetails.email}
-                                onChange={handleDetails}
-                                className="border border-gray-300 rounded-md px-3 py-1 w-full"
-                            />
-                        </div>
-                        <div className="flex justify-end">
-                            <button onClick={handleSave} className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2">Save</button>
-                            <button onClick={() => setShowModal({
-                                ...showModal,
-                                forProfile: false
-                            })} className="bg-gray-300 px-4 py-2 rounded-md">Cancel</button>
-                        </div>
-                    </div>
-                </div>
+                <UserModal
+                    setDetails={setUserDetails}
+                    Details={userdetails}
+                    setModel={() => setShowModal({ ...showModal, forProfile: false })}
+                    isDataUpdated={setfetchDependency}
+                />
+            )}
+            {showModal.forAddress && (
+                <UserModal
+                    setDetails={setNewAddress}
+                    Details={newAddress}
+                    setModel={() => setShowModal({ ...showModal, forAddress: false })}
+                    isDataUpdated={setfetchDependency}
+                />
             )}
             <LoadingBar
                 color='#f11946'

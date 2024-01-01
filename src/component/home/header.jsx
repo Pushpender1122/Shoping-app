@@ -7,13 +7,11 @@ import './header.css'
 import Alert from '../alerts/alert';
 import { Authentication } from '../context/auth';
 import { SerachlistProvider } from '../context/serchContext';
-
 const Header = () => {
     const [cookiestate, setCookiestate] = useState(null);
     const [showAlert, setShowAlert] = useState(false);
-    const { setIsAuthenticated } = useContext(Authentication);
+    const { isAuthenticated, setIsAuthenticated } = useContext(Authentication);
     const [isOpen, setIsOpen] = useState(false);
-
     const { serachList, setSearchList } = useContext(SerachlistProvider);
     const apiUrl = process.env.REACT_APP_SERVER_URL;
     const [alertConfig, setAlertConfig] = useState({
@@ -44,9 +42,7 @@ const Header = () => {
         setIsOpen(!isOpen);
     };
     const navigate = useNavigate();
-    const handleNav = () => {
-        navigate('/user/login');
-    }
+
     const handleLogout = async () => {
         try {
             const cookie = Cookies.get('Auth');
@@ -54,10 +50,6 @@ const Header = () => {
                 const result = await axios.get(`${apiUrl}auth/user/logout`, { withCredentials: true });
                 console.log(result.data); // Logging the actual result from the server
                 if (result.data.message === "Successfully logged out") {
-                    setIsAuthenticated({
-                        isAuthenticated: false,
-                        UserRole: undefined
-                    })
                     handleSuccessLogout();
                 } else {
                     handleFailedLogout('Authentication Failed');
@@ -81,6 +73,10 @@ const Header = () => {
         });
         setShowAlert(true);
         setTimeout(() => {
+            setIsAuthenticated({
+                isAuthenticated: false,
+                UserRole: undefined
+            })
             navigate('/');
         }, 3000);
     };
