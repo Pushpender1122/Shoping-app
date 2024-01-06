@@ -25,113 +25,109 @@ const Lpage = () => {
         email: "",
         password: "",
     });
-    const [CheckLogin, SetCheckLogin] = useState(0);
+    const [CheckLogin, SetCheckLogin] = useState(true);
 
-    const sendData = (e) => {
+    const sendData = async (e) => {
         e.preventDefault();
-        if (data.email.length > 5 && data.password.length >= 1) {
-            setValidData((prevData) => ({
-                ...prevData,
-                email: "",
-                password: ""
-            }));
-            fetch(`${apiUrl}auth/user/login`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ data }),
 
-            })
-                .then((response) => response.json())
-                .then((result) => {
-                    console.log(result);
-                    if (result.message === 'Email not found') {
-                        setValidData((prevData) => ({
-                            ...prevData,
-                            email: result.message
-                        }));
-                    }
-                    if (result.message === 'Password incorrect') {
-                        SetCheckLogin(0);
-                        setValidData((prevData) => ({
-                            ...prevData,
-                            password: result.message
-                        }));
-                    }
-                    if (result.message === "Succesfull login") {
-                        // Set cookie with 1-hour expiration
-                        console.log(result.message);
-                        SetCheckLogin(1);
-                        setTimeout(() => {
-                            setData({
-                                email: '',
-                                password: ''
-                            })
-                        }, 2000);
-                        // setIsAuthenticated(true);
-                        Cookies.set('Auth', 'Loggedin', { expires: 1 / 24 }); // 1/24 represents 1 hour (1 hour = 1/24 days)
-                        Cookies.set('UserRole', result.userRole, { expires: 1 / 24 }); // 1/24 represents 1 hour (1 hour = 1/24 days)
-                        Cookies.set('UserId', result.userId, { expires: 1 / 24 }); // 1/24 represents 1 hour (1 hour = 1/24 days)
-                        setError('hideElement');
-                        setShowAlert(true);
-                        setTimeout(() => {
-                            setShowAlert(false);
-                            setIsAuthenticated({
-                                isAuthenticated: true,
-                                UserRole: result.userRole
-                            });
-                            // navigate('/');
-                        }, 4000);
-
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
+        if (isValidData()) {
+            try {
+                const response = await fetch(`${apiUrl}auth/user/login`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ data }),
                 });
-        }
-        if (data.email.length <= 4) {
-            setValidData((prevData) => ({
-                ...prevData,
-                email: "Enter valid email"
-            }));
-        }
-        if (data.email.length > 4) {
-            setValidData((prevData) => ({
-                ...prevData,
-                email: ""
-            }));
-        }
-        if (data.password.length <= 0) {
-            setValidData((prevData) => ({
-                ...prevData,
-                password: "Enter a password"
-            }));
-        }
-        if (data.password.length > 0) {
-            setValidData((prevData) => ({
-                ...prevData,
-                password: ""
-            }));
-        }
-        setTimeout(() => {
-            if (CheckLogin) {
-                setError('hideElement');
+
+                const result = await response.json();
+                console.log(result);
+
+                if (result.message === 'Email not found') {
+                    setValidData((prevData) => ({
+                        ...prevData,
+                        email: result.message,
+                    }));
+                }
+                if (result.message === 'Password incorrect') {
+                    setValidData((prevData) => ({
+                        ...prevData,
+                        password: result.message,
+                    }));
+                }
+                if (result.message === 'Succesfull login') {
+                    SetCheckLogin(false);
+                    setTimeout(() => {
+                        setData({
+                            email: '',
+                            password: '',
+                        });
+                    }, 2000);
+
+                    Cookies.set('Auth', 'Loggedin', { expires: 1 / 24 });
+                    Cookies.set('UserRole', result.userRole, { expires: 1 / 24 });
+                    Cookies.set('UserId', result.userId, { expires: 1 / 24 });
+
+                    setError('hideElement');
+                    setShowAlert(true);
+
+                    setTimeout(() => {
+                        setShowAlert(false);
+                        setIsAuthenticated({
+                            isAuthenticated: true,
+                            UserRole: result.userRole,
+                        });
+                    }, 4000);
+                }
+            } catch (error) {
+                console.error('Error:', error);
             }
-            else {
+        }
+
+        // Validation for password can stay here...
+
+        setTimeout(() => {
+            if (!CheckLogin) {
+                setError('hideElement');
+            } else {
                 setError('');
             }
         }, 250);
-    }
+    };
+
+    const isValidData = () => {
+        const isValidEmailFormat = isValidEmail(data.email);
+        if (!isValidEmailFormat) {
+            setValidData((prevData) => ({
+                ...prevData,
+                email: "Enter a valid email",
+            }));
+        }
+        if (data.password <= 0) {
+            setValidData((prevData) => ({
+                ...prevData,
+                password: "Enter the password",
+            }));
+        }
+        return isValidEmailFormat && data.password.length >= 1;
+    };
+    const isValidEmail = (email) => {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    };
     const handleEmail = (e) => {
-        // console.log(e.target.value);
         setData((prevData) => ({
             ...prevData,
-            email: e.target.value
+            email: e.target.value,
         }));
-
-    }
+        if (e.target.value.length > 4) {
+            setValidData((prevData) => ({
+                ...prevData,
+                email: "",
+            }));
+        }
+    };
     const handlePassword = (e) => {
         // console.log(e.target.value);
         setData((prevData) => ({
@@ -167,9 +163,11 @@ const Lpage = () => {
                     </div>
                 </div>
             </div>
-            {CheckLogin ? null : <div className={`frame ${error}`}>
+            {CheckLogin && <div className={`frame ${error}`}>
                 <div className={`modal`}>
-                    <img src={imgerr} width="44" height="38" alt="Alert" />
+                    <div className="w-auto flex justify-center">
+                        <img src={imgerr} width="44" height="38" alt="Alert" className='items-center' />
+                    </div>
                     <span className="title">{success}</span>
                     <p>{validData.name}
                         <br />

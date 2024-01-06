@@ -18,8 +18,23 @@ const UserModal = ({
     })
     isDataUpdated(false);
     const handleSave = async () => {
-        setButtonState(true);
         const id = Cookies.get("UserId");
+        // console.log(Details);
+        if (Details?.email) {
+            if (!validateEmail(Details.email)) {
+                console.log("pppp");
+                setshowalert(true);
+                setAlertMessage({
+                    messageType: 'info',
+                    message: "Email not valid"
+                })
+                setTimeout(() => {
+                    setshowalert(false);
+                }, 4000);
+                return;
+            }
+        }
+        setButtonState(true);
         try {
             const response = await axios.post(`${apiUrl}auth/user/profile/${id}/edit/profile/details`, Details, {
                 withCredentials: true
@@ -44,9 +59,10 @@ const UserModal = ({
                 messageType: 'error',
                 message: error?.response?.data?.message
             })
+            setButtonState(false);
         }
         setTimeout(() => {
-            setshowalert(false);
+            setshowalert(false)
         }, 4000);
     }
 
@@ -61,7 +77,10 @@ const UserModal = ({
         // Modify the key to capitalize the first letter
         return key.charAt(0).toUpperCase() + key.slice(1);
     }
-
+    const validateEmail = (email) => {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    };
     return (
         <div className="fixed inset-0 z-10 overflow-y-auto flex items-center justify-center">
             <div className="absolute inset-0 bg-gray-500 opacity-50"></div>

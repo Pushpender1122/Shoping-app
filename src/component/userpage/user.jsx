@@ -5,23 +5,25 @@ import LoadingBar from 'react-top-loading-bar'
 // import './user.css'
 import Cookies from 'js-cookie';
 import Header from '../home/header';
-import Alert from '../alerts/alert';
 import UserModal from '../model/profileedit';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const UserProfile = () => {
     const [data, setData] = useState([]);
     const [authFailed, setAuthFailed] = useState(false);
     const [newImage, setNewImage] = useState(null);
     const [preimg, setpreimg] = useState(null);
     const [buttonState, setButtonState] = useState(true);
-    const [showalert, setshowalert] = useState(false);
     const [progress, setProgress] = useState(0);
     const [selectedAddress, setSelectedAddress] = useState('');
     const [fetchDependency, setfetchDependency] = useState(false);
     const [addresses, setAddresses] = useState([]);
+    const [editingAddressIndex, setEditingAddressIndex] = useState(null);
     const [showModal, setShowModal] = useState({
         forImage: false,
         forProfile: false,
-        forAddress: false
+        forAddress: false,
+        forEditAddress: false,
     });
     const [userdetails, setUserDetails] = useState({
         name: "",
@@ -29,6 +31,20 @@ const UserProfile = () => {
         // image: null
     })
     const [newAddress, setNewAddress] = useState({ label: '', address: '' });
+    const [alertMessage, setAlertMessage] = useState({
+        messageType: "success",
+        message: "Profile update SuccessFully"
+    })
+    const notify = () => toast[alertMessage.messageType](alertMessage.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        // pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    });
     const apiUrl = process.env.REACT_APP_SERVER_URL;
     useEffect(() => {
         const fetchData = async () => {
@@ -94,6 +110,11 @@ const UserProfile = () => {
                 else {
                     setfetchDependency(true);
                 }
+                setAlertMessage({
+                    messageType: "success",
+                    message: "Profile update SuccessFully"
+                });
+                notify();
                 setProgress(100);
                 setShowModal({
                     ...showModal,
@@ -101,7 +122,6 @@ const UserProfile = () => {
                 });
                 setpreimg(null);
                 setNewImage(null);
-                setshowalert(true);
                 // setButtonState(false);
             }
             else {
@@ -113,15 +133,58 @@ const UserProfile = () => {
                 preimg(null);
             }
             setButtonState(false);
-            setTimeout(() => {
-                setshowalert(false);
-            }, 4000);
-
         } catch (error) {
             console.error('Error uploading image:', error);
             // Handle error state or display an error message to the user
         }
     };
+    const handleEditClick = (index) => {
+        setEditingAddressIndex(index);
+    };
+
+    const changeAdress = (e, index) => {
+        const updatedAddresses = [...addresses];
+        updatedAddresses[index].address = e.target.value;
+        setAddresses(updatedAddresses);
+    };
+
+    const handleSaveAddress = async () => {
+        setEditingAddressIndex(null);
+        const id = Cookies.get("UserId");
+        const response = await axios.post(`${apiUrl}auth/user/profile/${id}/edit/profile/address`, addresses, {
+            withCredentials: true,
+        })
+        // console.log(response.data.user);
+        if (response.data.message === "Updated Succesfully") {
+            setData(response.data.user);
+            setAlertMessage({
+                messageType: "success",
+                message: "Profile update SuccessFully"
+            });
+            notify();
+        }
+        console.log(response.data);
+        setTimeout(() => {
+            setShowModal((prev) => ({
+                ...prev,
+                forEditAddress: false
+            }))
+        }, 4500);//later decision of this it close auto or not <:(:)>
+    };
+
+    const handleDeleteAddress = (id) => {
+        if (addresses.length === 1) {
+            setAlertMessage({
+                messageType: "error",
+                message: "One address is required"
+            });
+            return notify();
+        }
+        const ans = addresses.filter((index, i) => i !== id);
+        setAddresses(ans);
+        console.log(ans);
+        // console.log(id);
+    }
     return (
         <>
             <Header />
@@ -130,7 +193,7 @@ const UserProfile = () => {
                 <div className="bg-white rounded-lg shadow-md p-6 mb-6 flex items-center">
                     {/* Profile Picture */}
                     <div className="w-20 h-20 overflow-hidden rounded-full mr-4">
-                        <img src={data.img || "https://images.unsplash.com/photo-1682687982502-1529b3b33f85?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxNnx8fGVufDB8fHx8fA%3D%3D"} alt="Profile" className="w-full h-full object-cover" />                    </div>
+                        <img src={data.img || "https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg"} alt="Profile" className="w-full h-full object-cover" />                    </div>
                     {/* User Information */}
                     <div>
                         <h1 className="text-2xl font-semibold">Your Profile</h1>
@@ -183,6 +246,9 @@ const UserProfile = () => {
                     <div>
                         <h3 className="text-lg font-semibold mb-2">Add New Address</h3>
                         <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md" onClick={() => setShowModal({ ...showModal, forAddress: true })}>Create New Address</button>
+                        <button onClick={() => { setShowModal((prev) => ({ ...prev, forEditAddress: true })) }} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md ml-3">
+                            Edit Address
+                        </button>
                     </div>
                 </div>
                 {/* Order History Section */}
@@ -220,6 +286,53 @@ const UserProfile = () => {
                     </div>
                 </div>
             )}
+            {showModal.forEditAddress && (<div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50">
+                <div className="bg-white p-6 rounded shadow-md max-w-md">
+                    <h2 className="text-lg font-semibold mb-4">Edit Addresses</h2>
+                    <div className="space-y-4">
+                        {addresses.map((addr, i) => (
+                            <div key={i} className="flex items-center justify-between border-b pb-2">
+                                <div>
+                                    <p className="font-semibold">{addr.label}</p>
+                                    {editingAddressIndex === i ? (
+                                        <input
+                                            type="text"
+                                            value={addr.address}
+                                            onChange={(e) => changeAdress(e, i)}
+                                            className="border rounded py-1 px-2 w-full"
+                                        />
+                                    ) : (
+                                        <p>{addr.address}</p>
+                                    )}
+                                </div>
+                                <button
+                                    onClick={() => handleEditClick(i)}
+                                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mt-4"
+                                >
+                                    Edit
+                                </button>
+                                {editingAddressIndex === i && (
+                                    <>
+                                        <button className='bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md mt-4' onClick={() => { handleDeleteAddress(editingAddressIndex) }}>Delete</button>
+                                    </>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                    <button
+                        onClick={() => handleSaveAddress()}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mt-4 ml-3 mr-3"
+                    >
+                        Save
+                    </button>
+                    <button
+                        onClick={() => { setShowModal((prev) => ({ ...prev, forEditAddress: false })) }}
+                        className="mt-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>)}
             {showModal.forProfile && (
                 <UserModal
                     setDetails={setUserDetails}
@@ -242,7 +355,8 @@ const UserProfile = () => {
                 height={4}
                 onLoaderFinished={() => setProgress(0)}
             />
-            {showalert && <Alert messageType={'success'} Message={'Profile update SuccessFully'} />}
+
+            <ToastContainer />
         </>
 
     );
