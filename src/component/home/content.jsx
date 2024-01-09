@@ -15,8 +15,12 @@ const Feed = (props) => {
     const apiUrl = process.env.REACT_APP_SERVER_URL;
     const baseurl = apiUrl;
     const { serachList } = useContext(SerachlistProvider);
+    const [alertMessage, setAlertMessage] = useState({
+        messageType: "empty",
+        message: ""
+    })
     const notify = () => {
-        toast.success('Added to Cart', {
+        toast[alertMessage.messageType](alertMessage.message, {
             position: "top-right",
             autoClose: 2000,
             hideProgressBar: false,
@@ -26,6 +30,11 @@ const Feed = (props) => {
             theme: "light",
         });
     };
+    useEffect(() => {
+        if (alertMessage.message !== '') {
+            notify();
+        }
+    }, [alertMessage])
     useEffect(() => {
         fetch(`${apiUrl}productlist`).then((response) => response.json())
             .then((result) => {
@@ -69,19 +78,43 @@ const Feed = (props) => {
     }
     const addToTemporaryCart = (value) => {
         const userId = Cookies.get('UserId') || null;
+
         try {
             let tempCart = JSON.parse(localStorage.getItem('TempCart')) || [];
 
             const existingItem = tempCart.find(item => item.id === value);
 
             if (existingItem) {
-                existingItem.numberOfItems++;
+                const checkProductOutOfStock = data.find(item => item._id === existingItem.id)
+                console.log(checkProductOutOfStock);
+                if (checkProductOutOfStock.Stock > existingItem.numberOfItems) {
+                    setAlertMessage({
+                        messageType: "success",
+                        message: "Added to Cart"
+                    })
+                    // notify();
+                    existingItem.numberOfItems++;
+                    console.log("Its added to cart");
+                }
+                else {
+                    setAlertMessage({
+                        messageType: "error",
+                        message: "Product out of Stock"
+                    })
+                    // notify();
+                    console.log("its error");
+                }
             } else {
                 const productObj = {
                     id: value,
                     numberOfItems: 1
                 };
                 tempCart.push(productObj);
+                setAlertMessage({
+                    messageType: "success",
+                    message: "Added to Cart"
+                })
+                // notify();
             }
 
             localStorage.setItem('TempCart', JSON.stringify(tempCart));
@@ -92,7 +125,6 @@ const Feed = (props) => {
             mergeCartsAfterLogin(userId);
         }
     };
-
     // Function to merge temporary cart with user's cart after login
     const mergeCartsAfterLogin = (userId) => {
         try {
@@ -142,7 +174,7 @@ const Feed = (props) => {
                                 <div className="product-grid__extend">
                                     <p className="product-grid__description">
                                         {truncateText(value?.Description, 60)} </p>
-                                    <span className="product-grid__btn product-grid__add-to-cart" onClick={() => { addToTemporaryCart(value._id); notify() }}>
+                                    <span className="product-grid__btn product-grid__add-to-cart" onClick={() => { addToTemporaryCart(value._id) }}>
                                         <i className="fa fa-cart-arrow-down"></i> Add to cart
                                     </span>
                                     <span className="product-grid__btn product-grid__view" onClick={(() => sendData(value._id))}>
