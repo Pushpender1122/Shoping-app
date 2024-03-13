@@ -5,19 +5,32 @@ import Header from '../home/header';
 import { useNavigate, useParams } from 'react-router-dom'
 import Alert from '../alerts/alert';
 import Cookies from 'js-cookie';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const Productde = () => {
     const apiUrl = process.env.REACT_APP_SERVER_URL;
     const baseurl = apiUrl;
     const [isInWishlist, setIsInWishlist] = useState(false);
     const [alertConfig, setAlertConfig] = useState({
-        alertMessage: "Added To Cart",
-        alertType: 'success'
+        messageType: "",
+        message: 'empty'
     })
     const navigate = useNavigate();
     var id = useParams();
     id = id.id.replace(':', '');
     const [data, setdata] = useState([]);
     const [showAlert, setShowAlert] = useState(false);
+    const notify = () => {
+        toast[alertConfig.messageType](alertConfig.message, {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
+    };
     useEffect(() => {
         // Fetch product details based on ID and set the data
         fetch(`${apiUrl}product/:?id=${id}`)
@@ -38,25 +51,56 @@ const Productde = () => {
                 console.log(err);
             });
     }, [id]);
+    useEffect(() => {
+        if (alertConfig.messageType !== '') {
+            notify();
+        }
+    }, [alertConfig])
     // Function to add items to temporary cart when user is not logged in
     const addToTemporaryCart = (value) => {
         const userId = Cookies.get('UserId') || null;
+
         try {
             let tempCart = JSON.parse(localStorage.getItem('TempCart')) || [];
-            setAlertConfig({
-                alertMessage: "Added To Cart",
-                alertType: 'success'
-            })
             const existingItem = tempCart.find(item => item.id === value);
-
             if (existingItem) {
-                existingItem.numberOfItems++;
+                const checkProductOutOfStock = data.find(item => item._id === existingItem.id)
+                console.log(checkProductOutOfStock);
+                if (checkProductOutOfStock.Stock > existingItem.numberOfItems) {
+                    setAlertConfig({
+                        messageType: "success",
+                        message: "Added to Cart"
+                    })
+                    existingItem.numberOfItems++;
+                }
+                else {
+                    setAlertConfig({
+                        messageType: "error",
+                        message: "Product out of Stock"
+                    })
+                }
             } else {
-                const productObj = {
-                    id: value,
-                    numberOfItems: 1
-                };
-                tempCart.push(productObj);
+
+                const itemCount = data.find(item => item._id === value);
+                // console.log(itemCount)
+                if (itemCount.Stock > 0) {
+                    // console.log(value);
+                    const productObj = {
+                        id: value,
+                        numberOfItems: 1
+                    };
+                    tempCart.push(productObj);
+                    setAlertConfig({
+                        messageType: "success",
+                        message: "Added to Cart"
+                    })
+                }
+                else {
+                    setAlertConfig({
+                        messageType: "error",
+                        message: "Product Out of Stock"
+                    })
+                }
             }
 
             localStorage.setItem('TempCart', JSON.stringify(tempCart));
@@ -67,7 +111,6 @@ const Productde = () => {
             mergeCartsAfterLogin(userId);
         }
     };
-
     // Function to merge temporary cart with user's cart after login
     const mergeCartsAfterLogin = (userId) => {
         try {
@@ -79,9 +122,27 @@ const Productde = () => {
                 const existingItem = userCart.find(uItem => uItem.id === item.id);
 
                 if (existingItem) {
-                    existingItem.numberOfItems += item.numberOfItems;
+                    const checkProductOutOfStock = data.find(item => item._id === existingItem.id)
+                    if (checkProductOutOfStock.Stock > existingItem.numberOfItems) {
+                        setAlertConfig({
+                            messageType: "success",
+                            message: "Added to Cart"
+                        })
+                        // notify();
+                        existingItem.numberOfItems += item.numberOfItems;
+                    }
+                    else {
+                        setAlertConfig({
+                            messageType: "error",
+                            message: "Product out of Stock"
+                        })
+                    }
                 } else {
                     userCart.push(item);
+                    setAlertConfig({
+                        messageType: "success",
+                        message: "Added to Cart"
+                    })
                 }
             });
 
@@ -97,11 +158,8 @@ const Productde = () => {
 
 
     const handleAlerts = () => {
-        setShowAlert(true);
+        setShowAlert(true)
         // You might want to use setTimeout to hide the alert after a few seconds
-        setTimeout(() => {
-            setShowAlert(false);
-        }, 7000);
     };
     const addToWishlist = (value) => {
         const userId = Cookies.get('UserId');
@@ -112,8 +170,8 @@ const Productde = () => {
             if (existingItemIndex !== -1) {
                 // Remove item from wishlist
                 setAlertConfig({
-                    alertMessage: "Remove from whislist",
-                    alertType: 'info'
+                    messageType: "Remove from whislist",
+                    message: 'info'
                 })
                 wishList.splice(existingItemIndex, 1);
                 setIsInWishlist(false);
@@ -121,8 +179,8 @@ const Productde = () => {
             } else {
                 // Add item to wishlist
                 setAlertConfig({
-                    alertMessage: "Added To whislist",
-                    alertType: 'success'
+                    messageType: "Added To whislist",
+                    message: 'success'
                 })
                 const newItem = { id: value };
                 wishList.push(newItem);
@@ -169,14 +227,15 @@ const Productde = () => {
                                 </div>
                             </div>
                             <div className='my-10 flex flex-col md:flex-row justify-start items-center '>
-                                <button className='mb-4 md:mb-0 md:mr-4 bg-indigo-700 hover:bg-blue-700' onClick={() => { addToTemporaryCart(value._id); handleAlerts() }}>Add To Cart</button>
+                                <button className='mb-4 md:mb-0 md:mr-4 bg-indigo-700 hover:bg-blue-700' onClick={() => { addToTemporaryCart(value._id) }}>Add To Cart</button>
                                 <button className='mx-4 bg-indigo-700 hover:bg-blue-700' onClick={() => { addToWishlist(value._id); handleAlerts() }} >{isInWishlist ? 'Remove From Wishlist' : 'Add To Wishlist'}</button>
                             </div>
                         </div>
                     </section>
                 </div>
             })}
-            {showAlert && <Alert messageType={alertConfig.alertType} Message={alertConfig.alertMessage} />}
+            <ToastContainer />
+            {/* {showAlert && <Alert messageType={alertConfig.message} Message={alertConfig.messageType} />} */}
         </>
     );
 }

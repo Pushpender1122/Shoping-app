@@ -18,6 +18,7 @@ const UserProfile = () => {
     const [selectedAddress, setSelectedAddress] = useState('');
     const [fetchDependency, setfetchDependency] = useState(false);
     const [addresses, setAddresses] = useState([]);
+    const [orders, setOrder] = useState([]);
     const [editingAddressIndex, setEditingAddressIndex] = useState(null);
     const [showModal, setShowModal] = useState({
         forImage: false,
@@ -57,6 +58,7 @@ const UserProfile = () => {
                 } else {
                     setData(response.data.userdetails);
                     setAddresses(response.data.userdetails.addresses);
+                    setOrder(response.data.userdetails.orders);
                 }
                 console.log(response);
             } catch (error) {
@@ -257,15 +259,16 @@ const UserProfile = () => {
                     {/* Order List */}
                     <div className="border-t-2 border-gray-200 pt-4">
                         {/* Example Order */}
-                        <div className="flex justify-between items-center mb-3">
-                            <p className="text-gray-600">Order #1234</p>
-                            <p className="text-gray-500">$150</p>
-                        </div>
-                        {/* Example Order */}
-                        <div className="flex justify-between items-center mb-3">
-                            <p className="text-gray-600">Order #5678</p>
-                            <p className="text-gray-500">$200</p>
-                        </div>
+                        {orders?.map((value, i) => {
+                            return (
+                                <>
+                                    <div className="flex justify-between items-center mb-3">
+                                        <p className="text-gray-500">{value.items.productName}</p>
+                                        <p className="text-gray-600">{value.orderStatus}</p>
+                                    </div>
+                                </>
+                            )
+                        })}
                         {/* Add more orders... */}
                     </div>
                 </div>

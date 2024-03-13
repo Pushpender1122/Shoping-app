@@ -81,9 +81,7 @@ const Feed = (props) => {
 
         try {
             let tempCart = JSON.parse(localStorage.getItem('TempCart')) || [];
-
             const existingItem = tempCart.find(item => item.id === value);
-
             if (existingItem) {
                 const checkProductOutOfStock = data.find(item => item._id === existingItem.id)
                 console.log(checkProductOutOfStock);
@@ -92,28 +90,35 @@ const Feed = (props) => {
                         messageType: "success",
                         message: "Added to Cart"
                     })
-                    // notify();
                     existingItem.numberOfItems++;
-                    console.log("Its added to cart");
                 }
                 else {
                     setAlertMessage({
                         messageType: "error",
                         message: "Product out of Stock"
                     })
-                    // notify();
-                    console.log("its error");
                 }
             } else {
-                const productObj = {
-                    id: value,
-                    numberOfItems: 1
-                };
-                tempCart.push(productObj);
-                setAlertMessage({
-                    messageType: "success",
-                    message: "Added to Cart"
-                })
+                const itemCount = data.find(item => item._id === value);
+                // console.log(itemCount)
+                if (itemCount.Stock > 0) {
+                    // console.log(value);
+                    const productObj = {
+                        id: value,
+                        numberOfItems: 1
+                    };
+                    tempCart.push(productObj);
+                    setAlertMessage({
+                        messageType: "success",
+                        message: "Added to Cart"
+                    })
+                }
+                else {
+                    setAlertMessage({
+                        messageType: "error",
+                        message: "Product Out of Stock"
+                    })
+                }
                 // notify();
             }
 
@@ -136,9 +141,27 @@ const Feed = (props) => {
                 const existingItem = userCart.find(uItem => uItem.id === item.id);
 
                 if (existingItem) {
-                    existingItem.numberOfItems += item.numberOfItems;
+                    const checkProductOutOfStock = data.find(item => item._id === existingItem.id)
+                    if (checkProductOutOfStock.Stock > existingItem.numberOfItems) {
+                        setAlertMessage({
+                            messageType: "success",
+                            message: "Added to Cart"
+                        })
+                        // notify();
+                        existingItem.numberOfItems += item.numberOfItems;
+                    }
+                    else {
+                        setAlertMessage({
+                            messageType: "error",
+                            message: "Product out of Stock"
+                        })
+                    }
                 } else {
                     userCart.push(item);
+                    setAlertMessage({
+                        messageType: "success",
+                        message: "Added to Cart"
+                    })
                 }
             });
 

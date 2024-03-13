@@ -72,8 +72,12 @@ function ShoppingCart() {
     const [cartItem, setCartItems] = useState([]);
     const [data, setData] = useState([]);
     const [userId, setuserId] = useState(null);
+    const [alertoption, setAlertMessage] = useState({
+        alertType: "info",
+        alertMessage: ""
+    })
     const notify = () => {
-        toast.info('Product delete from Cart', {
+        toast[alertoption.alertType](alertoption.alertMessage, {
             position: "top-right",
             autoClose: 2000,
             hideProgressBar: false,
@@ -188,7 +192,10 @@ function ShoppingCart() {
 
     const handleProductDelete = (id) => {
         const userId = Cookies.get('UserId') || null;
-
+        setAlertMessage({
+            alertType: "info",
+            alertMessage: "Product delete from Cart"
+        });
         if (userId) {
             // User is logged in
             const updatedUserCart = cartItem.filter(item => item.id !== id);
@@ -269,6 +276,32 @@ function ShoppingCart() {
         return text.concat(text, '...');
 
     }
+    const handleCheckout = async () => {
+        const result = await axios.post(`${apiUrl}auth/user/profile/${userId}/orders/createorder`, { "data": cartItem });
+        console.log(result);
+        if (result.data.message == "Orders placed successfully") {
+            setAlertMessage({
+                alertType: "success",
+                alertMessage: result.data.message
+            });
+            setTimeout(() => {
+                setCartItems([]);
+                localStorage.clear(`CartList_${userId}`);
+                localStorage.clear(`TempCart${userId}`);
+            }, 3000);
+        } else {
+
+            setAlertMessage({
+                alertType: "error",
+                alertMessage: result.data.message
+            });
+        }
+    }
+    useEffect(() => {
+        if (alertoption.alertMessage !== '') {
+            notify();
+        }
+    }, [alertoption])
     return (
         <>
             <Header />
@@ -302,7 +335,7 @@ function ShoppingCart() {
                                     <span className="button bg-indigo-600 py-1 px-2 text-xl font-bold cursor-pointer" onClick={(e) => handleQuantityChange(value._id, 1)}>+</span>
                                 </div>
                                 <div className="product-removal pl-4">
-                                    <button className="remove-product" onClick={(e) => { handleProductDelete(value._id); notify() }}>Remove</button>
+                                    <button className="remove-product" onClick={(e) => { handleProductDelete(value._id) }}>Remove</button>
                                 </div>
                                 <div className="product-line-price">{value?.ProductPrice * cartItem.find(item => item.id === value._id)?.numberOfItems || 1}</div>
                             </div>
@@ -321,7 +354,7 @@ function ShoppingCart() {
                                 <div className="totals-value" id="cart-total">{grandTotal()}</div>
                             </div>
                         </div>
-                        <button className="checkout my-6">Checkout</button>
+                        <button className="checkout my-6" onClick={handleCheckout}>Checkout</button>
                     </div >)
             }
             <ToastContainer />
