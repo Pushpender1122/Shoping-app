@@ -13,7 +13,7 @@ const Productde = () => {
     const [isInWishlist, setIsInWishlist] = useState(false);
     const [alertConfig, setAlertConfig] = useState({
         messageType: "",
-        message: 'empty'
+        message: "empty"
     })
     const navigate = useNavigate();
     var id = useParams();
@@ -170,17 +170,18 @@ const Productde = () => {
             if (existingItemIndex !== -1) {
                 // Remove item from wishlist
                 setAlertConfig({
-                    messageType: "Remove from whislist",
-                    message: 'info'
+                    message: "Remove from whislist",
+                    messageType: 'info'
                 })
                 wishList.splice(existingItemIndex, 1);
                 setIsInWishlist(false);
                 localStorage.setItem(`WishList_${userId}`, JSON.stringify(wishList));
             } else {
                 // Add item to wishlist
+                console.log("oo")
                 setAlertConfig({
-                    messageType: "Added To whislist",
-                    message: 'success'
+                    message: "Added To whislist",
+                    messageType: 'success'
                 })
                 const newItem = { id: value };
                 wishList.push(newItem);
@@ -228,7 +229,7 @@ const Productde = () => {
                             </div>
                             <div className='my-10 flex flex-col md:flex-row justify-start items-center '>
                                 <button className='mb-4 md:mb-0 md:mr-4 bg-indigo-700 hover:bg-blue-700' onClick={() => { addToTemporaryCart(value._id) }}>Add To Cart</button>
-                                <button className='mx-4 bg-indigo-700 hover:bg-blue-700' onClick={() => { addToWishlist(value._id); handleAlerts() }} >{isInWishlist ? 'Remove From Wishlist' : 'Add To Wishlist'}</button>
+                                <button className='mx-4 bg-indigo-700 hover:bg-blue-700' onClick={() => { addToWishlist(value._id) }} >{isInWishlist ? 'Remove From Wishlist' : 'Add To Wishlist'}</button>
                             </div>
                         </div>
                     </section>

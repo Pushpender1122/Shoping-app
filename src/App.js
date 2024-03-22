@@ -14,6 +14,7 @@ import { Authentication } from './component/context/auth';
 import AdminprivateRoute from "./component/private/adminprivateRoute";
 import Wishlist from "./component/cart/wishlist";
 import Page404 from "./component/404/page404";
+import ProductSearch from "./component/product/seachproduct";
 function App() {
   const { isAuthenticated } = useContext(Authentication);
   // console.log(isAuthenticated);
@@ -36,6 +37,7 @@ function App() {
             </Route >
             <Route exact path="/product/cart" element={<CartComponent />} />
             <Route exact path="/product/:id" element={<Productde />} />
+            <Route exact path="/product/search" element={<ProductSearch />} />
             <Route path="*" element={<Page404 />}></Route>
           </Routes>
         </BrowserRouter>

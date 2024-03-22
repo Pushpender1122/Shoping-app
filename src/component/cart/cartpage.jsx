@@ -277,23 +277,31 @@ function ShoppingCart() {
 
     }
     const handleCheckout = async () => {
-        const result = await axios.post(`${apiUrl}auth/user/profile/${userId}/orders/createorder`, { "data": cartItem });
-        console.log(result);
-        if (result.data.message == "Orders placed successfully") {
-            setAlertMessage({
-                alertType: "success",
-                alertMessage: result.data.message
-            });
-            setTimeout(() => {
-                setCartItems([]);
-                localStorage.clear(`CartList_${userId}`);
-                localStorage.clear(`TempCart${userId}`);
-            }, 3000);
-        } else {
+        if (userId) {
+            const result = await axios.post(`${apiUrl}auth/user/profile/${userId}/orders/createorder`, { "data": cartItem });
+            console.log(result);
+            if (result.data.message == "Orders placed successfully") {
+                setAlertMessage({
+                    alertType: "success",
+                    alertMessage: result.data.message
+                });
+                setTimeout(() => {
+                    setCartItems([]);
+                    localStorage.clear(`CartList_${userId}`);
+                    localStorage.clear(`TempCart${userId}`);
+                }, 3000);
+            } else {
 
+                setAlertMessage({
+                    alertType: "error",
+                    alertMessage: result.data.message
+                });
+            }
+        }
+        else {
             setAlertMessage({
-                alertType: "error",
-                alertMessage: result.data.message
+                alertType: "info",
+                alertMessage: "Please login first "
             });
         }
     }
