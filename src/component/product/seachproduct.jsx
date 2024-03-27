@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { Rating } from 'react-simple-star-rating'
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom'
+import { SerachlistProvider } from '../context/serchContext';
 const Baseurl = process.env.REACT_APP_SERVER_URL
 const Product = ({ imgSrc, title, subtitle, price, genre, rating, id }) => {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ const Product = ({ imgSrc, title, subtitle, price, genre, rating, id }) => {
             </div >
             <div className="product-content">
                 <h3>{title} <small>{subtitle}</small></h3>
-                <Rating initialValue={rating} readonly={true} className="not-tailwind" size={16} />
+                <Rating initialValue={rating} readonly={true} className="not-tailwind" size={16} allowFraction={true} />
                 <p className="product-text price">₹{price}</p>
                 <p className="product-text genre">{genre}</p>
             </div>
@@ -73,15 +74,23 @@ const ProductPage = () => {
     const [filters, handleFiltersChange] = useState({
         rating: '',
         category: '',
-        priceRange: '50000',
+        priceRange: '',
+        productName: ''
     });
     const [product, setProduct] = useState([]);
     const [loader, setLoader] = useState(true);
+    const { serachList } = React.useContext(SerachlistProvider);
+
     useEffect(() => {
         var getData = setTimeout(() => {
-            axios.get(`http://localhost:7000/productList?rating=${filters.rating}&category=${filters.category}&price=1000-${filters.priceRange}`)
+            let url = `http://localhost:7000/productList?rating=${filters.rating}&category=${filters.category}&productname=${serachList}`;
+            if (filters.priceRange) {
+                url += `&price=0-${filters.priceRange}`;
+            }
+            axios.get(url)
                 .then((res) => {
                     setProduct(res.data);
+                    console.log(res.data)
                     setLoader(false);
                 })
                 .catch((err) => {
@@ -89,10 +98,12 @@ const ProductPage = () => {
                 })
         }, 1000);
         return () => clearTimeout(getData)
-    }, [filters])
+    }, [filters, serachList])
+
     const handleViewChange = () => {
         setView(view === 'products-table' ? 'products-grid' : 'products-table');
     };
+
     return (
         <>
             <Header />
@@ -107,5 +118,6 @@ const ProductPage = () => {
         </>
     );
 };
+
 
 export default ProductPage;

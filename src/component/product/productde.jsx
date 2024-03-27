@@ -5,6 +5,7 @@ import Header from '../home/header';
 import { useNavigate, useParams } from 'react-router-dom'
 import Alert from '../alerts/alert';
 import Cookies from 'js-cookie';
+import { Rating } from 'react-simple-star-rating'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const Productde = () => {
@@ -210,7 +211,7 @@ const Productde = () => {
                             <div className="main-info">
                                 <h4>{value.ProductName}</h4>
                                 <div className="star-rating">
-                                    <span>★★★★</span>★
+                                    <Rating initialValue={value.Rating} readonly={true} className="not-tailwind" size={16} allowFraction={true} />
                                 </div>
                                 <p>Price: <span id="price">₹{value.ProductPrice}</span></p>
                             </div>

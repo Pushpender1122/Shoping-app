@@ -50,6 +50,7 @@ function Addprodcut() {
         fetch('http://localhost:7000/auth/admin/addProduct', {
             method: 'POST',
             body: formData,
+            credentials: 'include',
         })
             .then((response) => response.json())
             .then((result) => {

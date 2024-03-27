@@ -93,6 +93,9 @@ const Header = () => {
             navigate('/user/login');
         }, 3000);
     };
+    const handleProductSearch = () => {
+        navigate("/product/search");
+    }
     return (
         <header>
 
@@ -107,8 +110,12 @@ const Header = () => {
                     <i className="fas fa-search"></i>
                     <input className="input-open-search" id="open-search" type="checkbox" name="menu" />
                     <div className="search">
-                        <button className="button-search"><i className="fas fa-search"></i></button>
-                        <input type="text" placeholder="What are you looking for?" className="input-search" value={serachList} onChange={(e) => setSearchList(e.target.value)} />
+                        <button className="button-search" onClick={handleProductSearch}><i className="fas fa-search"></i></button>
+                        <input type="text" placeholder="What are you looking for?" className="input-search" value={serachList} onChange={(e) => setSearchList(e.target.value)} onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                navigate("/product/search");
+                            }
+                        }} />
                     </div>
                 </label>
                 {/* // search */}

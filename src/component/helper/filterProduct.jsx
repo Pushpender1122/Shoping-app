@@ -49,6 +49,7 @@ const ProductFilter = ({ filters, onFiltersChange }) => {
                         <option value="clothing">Clothing</option>
                         <option value="electronics">Electronics</option>
                         <option value="books">Books</option>
+                        <option value="phone">Phone</option>
                     </select>
                 </div>
                 {/* Price range input */}
