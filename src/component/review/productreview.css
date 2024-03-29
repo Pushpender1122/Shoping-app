@@ -1,0 +1,209 @@
+/*************** ОБЩИЕ СТИЛИ ДЛЯ CODEPEN ***************/
+
+
+/* body на всю высоту */
+/* html {
+    display: table;
+    margin: auto;
+} */
+
+/* html как таблица и выравнение по центру */
+
+
+.reviews {
+    margin-bottom: 20px;
+    background-color: #fff;
+    display: flex;
+    gap: 25px;
+    /* расстояние между элементами */
+    justify-content: space-between;
+    /* раскинуть элементы внутри reviews по краям*/
+    flex-wrap: wrap;
+    /* разрешает переносить элементы когда уменьшается ширина */
+    border-radius: 20px;
+    /* радиус скругления по макету */
+    padding: 70px 96px;
+    /* отступы сверху и снизу по макету +- */
+    box-shadow: 0px 27px 31px 0px rgba(0, 0, 0, 0.02);
+    /* тень по макету */
+}
+
+.reviews-left {
+    width: 360px;
+    /* ширина левого блока по макету */
+}
+
+.reviews-left h2 {
+    margin-top: 0;
+    /* обнуляю верхний отступ у заголовка (чтобы как по макету) */
+}
+
+.reviews-left .add-reviews {
+    /* кнопка добавления отзыва */
+    margin-top: 40px;
+    border-radius: 100px;
+    border: 2px solid transparent;
+    padding: 15px 25px;
+    background: #0060DF;
+}
+
+.reviews-left .add-reviews:hover {
+    /* при наведении на кнопку */
+    background-color: white;
+    color: #545BC4;
+    border: 2px solid #0060DF;
+}
+
+.reviews-right {
+    /* правый блок */
+    display: flex;
+    max-width: 736px;
+}
+
+.reviews-right__avatar {
+    /* аватарка */
+    padding-right: 40px;
+}
+
+.reviews-right__avatar .img {
+    /* заглушка просто вместо картинки */
+    width: 130px;
+    height: 130px;
+    background-color: #EBEBEB;
+    border-radius: 50%;
+    /* background-image: url('http://localhost:3000/pro1.jpg');
+    background-size: contain; */
+    object-fit: cover;
+}
+
+.reviews-right__item h3 {
+    /* заголовок имени от кого отзыв */
+    margin-top: 0;
+    /* обнуляю верхний отступ чтобы как по макету */
+}
+
+.reviews-right__item .block-tour {
+    /* блок с туром */
+    display: flex;
+    flex-wrap: wrap;
+    /* разрешает переносить элементы когда уменьшается ширина */
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #EBEBEB;
+    border-top: 1px solid #EBEBEB;
+}
+
+.block-tour .stars svg {
+    /* звездочки */
+    padding-left: 5px;
+    /* чтобы не сливались и от каждой был отступ */
+}
+
+.block-tour span {
+    margin-right: 30px;
+    /* чтобы не сливались и от каждой span отступ */
+    color: #7B7B7B;
+}
+
+.block-tour a {
+    /* ссылка */
+    color: #252525;
+}
+
+.block-tour a:hover {
+    /* при наведении */
+    text-decoration: none;
+}
+
+.reviews-right__nav {
+    /* навигация */
+    display: flex;
+    justify-content: flex-end;
+    /* чтобы были справа */
+    gap: 15px;
+}
+
+.pagination {
+    /* пагинация */
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-right: 30px;
+}
+
+.pagination .bullet {
+    /* точки */
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #E2E2E2;
+}
+
+.bullet.active {
+    /* активная точка */
+    background: #FFD600;
+}
+
+.reviews-right__nav button {
+    /* кнопки навигации */
+    border: 2px solid #d2d2d2;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.reviews-right__nav button:hover {
+    /* при наведении на кнопку навигации */
+    background: #FFD600;
+}
+
+.reviews-right__nav button svg {
+    /* иконки */
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform-origin: center;
+}
+
+@media (max-width: 1400px) {
+
+    /* усолвие при уменьшении ширины меньше 1400px */
+    .reviews {
+        flex-direction: column;
+        /* развернул по вертикали */
+        /* align-items: center; */
+        /* выровнил по центру */
+        padding: 50px 30px;
+    }
+
+    .reviews-left .add-reviews {
+        /* кнопка добавления отзыва */
+        margin-top: 5px;
+    }
+
+    .reviews-left {
+        width: 100%;
+        /* ширина левого блока */
+    }
+
+    .reviews-right {
+        max-width: 100%;
+        /* ширина правого блока */
+    }
+}
+
+@media (max-width: 580px) {
+
+
+    .reviews {
+        padding: 30px 20px;
+        /* отступы сверху и снизу */
+    }
+
+    .reviews-right {
+        flex-direction: column;
+        /* развернул по вертикали */
+        gap: 10px;
+    }
+}

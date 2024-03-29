@@ -15,6 +15,7 @@ import AdminprivateRoute from "./component/private/adminprivateRoute";
 import Wishlist from "./component/cart/wishlist";
 import Page404 from "./component/404/page404";
 import ProductSearch from "./component/product/seachproduct";
+import Reviews from "./component/review/productreview";
 function App() {
   const { isAuthenticated } = useContext(Authentication);
   // console.log(isAuthenticated);
@@ -38,6 +39,7 @@ function App() {
             <Route exact path="/product/cart" element={<CartComponent />} />
             <Route exact path="/product/:id" element={<Productde />} />
             <Route exact path="/product/search" element={<ProductSearch />} />
+            {/* <Route exact path="/product/review" element={<Reviews />} /> */}
             <Route path="*" element={<Page404 />}></Route>
           </Routes>
         </BrowserRouter>

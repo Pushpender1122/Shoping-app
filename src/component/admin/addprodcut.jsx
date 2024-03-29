@@ -9,6 +9,7 @@ function Addprodcut() {
         Description: '',
         Category: [], // Initialize Category as an array
         item_img: [],
+        HighligthPoint: [],
     });
 
     const handleInputChange = (e) => {
@@ -25,7 +26,14 @@ function Addprodcut() {
                 ...prevData,
                 [name]: value.split(',').map((category) => category.trim()),
             }));
-        } else {
+        } else if (name === 'HighligthPoint') {
+            setItemData((prevData) => ({
+                ...prevData,
+                [name]: value
+                // [name]: value.split(',').map((val) => val.trim()),
+            }));
+        }
+        else {
             setItemData((prevData) => ({
                 ...prevData,
                 [name]: value,
@@ -35,13 +43,13 @@ function Addprodcut() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         const formData = new FormData();
         formData.append('ProductName', itemData.ProductName);
         formData.append('ProductPrice', itemData.ProductPrice);
         formData.append('stock', itemData.stock);
         formData.append('Description', itemData.Description);
         formData.append('Category', JSON.stringify(itemData.Category)); // Convert array to JSON string
+        formData.append('HighligthPoint', JSON.stringify(itemData.HighligthPoint)); // Convert array to JSON string
 
         for (let i = 0; i < itemData.item_img.length; i++) {
             formData.append('item_img', itemData.item_img[i]);
@@ -97,6 +105,13 @@ function Addprodcut() {
                     name="Category"
                     placeholder="Category (comma-separated)"
                     value={itemData.Category.join(', ')}
+                    onChange={handleInputChange}
+                />
+                <input
+                    type="text"
+                    name="HighligthPoint"
+                    placeholder="HighligthPoint (comma-separated)"
+                    value={itemData.HighligthPoint}
                     onChange={handleInputChange}
                 />
                 <input type="file" name="item_img" multiple onChange={handleInputChange} />

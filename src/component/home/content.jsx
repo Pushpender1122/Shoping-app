@@ -57,13 +57,13 @@ const Feed = (props) => {
                 console.log(err);
             })
     }, [])
-    useEffect(() => {
-        const filteredData = storedData?.filter((value) => {
-            // Check if the ProductName includes the search query (case-insensitive)
-            return value.ProductName.toLowerCase().includes(serachList.toLowerCase());
-        });
-        setdata(filteredData)
-    }, [serachList]);
+    // useEffect(() => { FOR THE SEARCH FUNCTIONALITY
+    //     const filteredData = storedData?.filter((value) => {
+    //         // Check if the ProductName includes the search query (case-insensitive)
+    //         return value.ProductName.toLowerCase().includes(serachList.toLowerCase());
+    //     });
+    //     setdata(filteredData)
+    // }, [serachList]);
 
     const sendData = (data) => {
         { setid(data) };

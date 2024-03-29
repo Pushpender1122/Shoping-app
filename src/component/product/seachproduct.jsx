@@ -56,7 +56,6 @@ const ProductList = ({ view, product }) => {
                 })}
                 {/* Add more <Product /> components here for additional products */}
             </div>
-
         </div>
     )
 };

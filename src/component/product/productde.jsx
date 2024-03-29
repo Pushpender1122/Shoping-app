@@ -8,6 +8,7 @@ import Cookies from 'js-cookie';
 import { Rating } from 'react-simple-star-rating'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Reviews from '../review/productreview';
 const Productde = () => {
     const apiUrl = process.env.REACT_APP_SERVER_URL;
     const baseurl = apiUrl;
@@ -20,7 +21,9 @@ const Productde = () => {
     var id = useParams();
     id = id.id.replace(':', '');
     const [data, setdata] = useState([]);
-    const [showAlert, setShowAlert] = useState(false);
+    const [userReviews, setUserReviews] = useState([]);
+    const [highlightedPoints, sethighlightedPoints] = useState([]);
+
     const notify = () => {
         toast[alertConfig.messageType](alertConfig.message, {
             position: "top-right",
@@ -32,6 +35,7 @@ const Productde = () => {
             theme: "light",
         });
     };
+    const [needUpdate, setNeedUpdate] = useState(false);
     useEffect(() => {
         // Fetch product details based on ID and set the data
         fetch(`${apiUrl}product/:?id=${id}`)
@@ -39,7 +43,10 @@ const Productde = () => {
             .then((result) => {
                 const arr = [result];
                 setdata(arr);
-
+                setNeedUpdate(false);
+                setUserReviews(result.RatingMessage);
+                sethighlightedPoints(result.HighligthPoint)
+                console.log(result);
                 // Check if the current product is in the wishlist
                 const userId = Cookies.get('UserId');
                 if (userId) {
@@ -51,7 +58,7 @@ const Productde = () => {
             .catch((err) => {
                 console.log(err);
             });
-    }, [id]);
+    }, [id, needUpdate]);
     useEffect(() => {
         if (alertConfig.messageType !== '') {
             notify();
@@ -158,10 +165,6 @@ const Productde = () => {
     };
 
 
-    const handleAlerts = () => {
-        setShowAlert(true)
-        // You might want to use setTimeout to hide the alert after a few seconds
-    };
     const addToWishlist = (value) => {
         const userId = Cookies.get('UserId');
         if (userId) {
@@ -179,7 +182,6 @@ const Productde = () => {
                 localStorage.setItem(`WishList_${userId}`, JSON.stringify(wishList));
             } else {
                 // Add item to wishlist
-                console.log("oo")
                 setAlertConfig({
                     message: "Added To whislist",
                     messageType: 'success'
@@ -193,10 +195,11 @@ const Productde = () => {
             navigate('/user/login');
         }
     };
+
     return (
         <>
             <Header />
-            {data.map((value, i) => {
+            {data.map((value, i) => { // ONLY ONE ITEM WILL BE DISPLAYED so why need loop ? 🤦‍♂️ 
                 return <div className='product-page-container'>
                     <section id="product-info">
                         <div className="item-image-parent">
@@ -221,7 +224,15 @@ const Productde = () => {
                                 <div className="STOCK">
                                     Stock:
                                 </div>
-                                <span className='text-green-500 text-xl mx-1'>InStock</span>
+                                <span className={`${value.Stock > 0 ? 'text-green-500' : 'text-red-500'} text-xl mx-1`}>{value.Stock > 0 ? 'InStock' : 'Out of Stock '}</span>
+                                <div className='mt-2'>
+                                    <h2 className="text-lg font-bold mb-4">Highlighted Points</h2>
+                                    <ul className="list-disc list-inside">
+                                        {highlightedPoints.map((point, index) => (
+                                            <li key={index} className="mb-2">{point}</li>
+                                        ))}
+                                    </ul>
+                                </div>
                                 <div className="description my-2">
                                     {/* Product description */}
                                     <p className='font-bold my-2'>Description :</p>
@@ -237,6 +248,9 @@ const Productde = () => {
                 </div>
             })}
             <ToastContainer />
+            <Reviews userReviews={userReviews} setNeedUpdate={setNeedUpdate} />
+            {/* <Reviews key={index} imgurl={review.userId.img} productRating={review.Rating} productMessage={review.message} userName={review.userId.name} /> */}
+            {/* <Reviews /> */}
             {/* {showAlert && <Alert messageType={alertConfig.message} Message={alertConfig.messageType} />} */}
         </>
     );

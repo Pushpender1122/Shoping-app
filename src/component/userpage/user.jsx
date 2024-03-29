@@ -8,6 +8,7 @@ import Header from '../home/header';
 import UserModal from '../model/profileedit';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Modal from '../../utility/zoomimage';
 const UserProfile = () => {
     const [data, setData] = useState([]);
     const [authFailed, setAuthFailed] = useState(false);
@@ -26,6 +27,8 @@ const UserProfile = () => {
         forAddress: false,
         forEditAddress: false,
     });
+    const [showImageZoomModal, setImageZoomShowModal] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
     const [userdetails, setUserDetails] = useState({
         name: "",
         email: "",
@@ -70,7 +73,10 @@ const UserProfile = () => {
     if (authFailed) {
         return <Navigate to="/" />;
     }
-
+    const handleClick = (imageSrc) => {
+        setSelectedImage(imageSrc);
+        setImageZoomShowModal(true);
+    };
     const handleAddressChange = (e) => {
         setSelectedAddress(e.target.value);
     };
@@ -194,7 +200,7 @@ const UserProfile = () => {
                 {/* Profile Header */}
                 <div className="bg-white rounded-lg shadow-md p-6 mb-6 flex items-center">
                     {/* Profile Picture */}
-                    <div className="w-20 h-20 overflow-hidden rounded-full mr-4">
+                    <div className="w-20 h-20 overflow-hidden rounded-full mr-4 cursor-pointer" onClick={() => handleClick(data.img)} >
                         <img src={data.img || "https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg"} alt="Profile" className="w-full h-full object-cover" />                    </div>
                     {/* User Information */}
                     <div>
@@ -358,8 +364,15 @@ const UserProfile = () => {
                 height={4}
                 onLoaderFinished={() => setProgress(0)}
             />
-
+            {showImageZoomModal && (
+                <Modal
+                    image={selectedImage}
+                    alt="Large Image"
+                    onClose={() => setImageZoomShowModal(false)}
+                />
+            )}
             <ToastContainer />
+
         </>
 
     );
