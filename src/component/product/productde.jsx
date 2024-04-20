@@ -2,13 +2,14 @@
 import React, { useEffect, useState } from 'react';
 import './product.css'
 import Header from '../home/header';
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import Alert from '../alerts/alert';
 import Cookies from 'js-cookie';
 import { Rating } from 'react-simple-star-rating'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Reviews from '../review/productreview';
+import SuggestedProducts from './suggestedProduct';
 const Productde = () => {
     const apiUrl = process.env.REACT_APP_SERVER_URL;
     const baseurl = apiUrl;
@@ -23,6 +24,7 @@ const Productde = () => {
     const [data, setdata] = useState([]);
     const [userReviews, setUserReviews] = useState([]);
     const [highlightedPoints, sethighlightedPoints] = useState([]);
+    const [suggestedProductsData, setSuggestedProductsdata] = useState([]);
 
     const notify = () => {
         toast[alertConfig.messageType](alertConfig.message, {
@@ -46,7 +48,11 @@ const Productde = () => {
                 setNeedUpdate(false);
                 setUserReviews(result.RatingMessage);
                 sethighlightedPoints(result.HighligthPoint)
+                setSuggestedProductsdata(result.SuggestedProduct)
                 console.log(result);
+                if (result.err) {
+                    navigate('/404');
+                }
                 // Check if the current product is in the wishlist
                 const userId = Cookies.get('UserId');
                 if (userId) {
@@ -200,7 +206,7 @@ const Productde = () => {
         <>
             <Header />
             {data.map((value, i) => { // ONLY ONE ITEM WILL BE DISPLAYED so why need loop ? 🤦‍♂️ 
-                return <div className='product-page-container'>
+                return <div className='product-page-container' key={i}>
                     <section id="product-info">
                         <div className="item-image-parent">
 
@@ -213,9 +219,9 @@ const Productde = () => {
                             {/* Main Info */}
                             <div className="main-info">
                                 <h4>{value.ProductName}</h4>
-                                <div className="star-rating">
+                                <a className="star-rating" href={'#review'}>
                                     <Rating initialValue={value.Rating} readonly={true} className="not-tailwind" size={16} allowFraction={true} />
-                                </div>
+                                </a>
                                 <p>Price: <span id="price">₹{value.ProductPrice}</span></p>
                             </div>
                             {/* Choose */}
@@ -228,10 +234,16 @@ const Productde = () => {
                                 <div className='mt-2'>
                                     <h2 className="text-lg font-bold mb-4">Highlighted Points</h2>
                                     <ul className="list-disc list-inside">
-                                        {highlightedPoints.map((point, index) => (
-                                            <li key={index} className="mb-2">{point}</li>
+                                        {highlightedPoints.length > 0 && highlightedPoints.map((point, index) => (
+                                            <div className='flex'>
+                                                <span className="mr-2">&#8226;</span>
+                                                <li key={index} className="mb-2 flex items-center">
+                                                    <p>{point}</p>
+                                                </li>
+                                            </div>
                                         ))}
                                     </ul>
+
                                 </div>
                                 <div className="description my-2">
                                     {/* Product description */}
@@ -248,6 +260,7 @@ const Productde = () => {
                 </div>
             })}
             <ToastContainer />
+            <SuggestedProducts products={suggestedProductsData} />
             <Reviews userReviews={userReviews} setNeedUpdate={setNeedUpdate} />
             {/* <Reviews key={index} imgurl={review.userId.img} productRating={review.Rating} productMessage={review.message} userName={review.userId.name} /> */}
             {/* <Reviews /> */}

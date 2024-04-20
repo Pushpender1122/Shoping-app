@@ -8,7 +8,7 @@ import Header from '../home/header';
 import UserModal from '../model/profileedit';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Modal from '../../utility/zoomimage';
+import Modal from '../utility/zoomimage';
 const UserProfile = () => {
     const [data, setData] = useState([]);
     const [authFailed, setAuthFailed] = useState(false);

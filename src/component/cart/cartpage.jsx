@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Cookies from 'js-cookie';
 import Header from '../home/header';
+import { useNavigate } from 'react-router-dom';
 function EmptyCart() {
     return (
         <div className="empty-cart">
@@ -87,6 +88,8 @@ function ShoppingCart() {
             theme: "light",
         });
     };
+    const navigate = useNavigate();
+
     useEffect(() => {
         const fetchCartItems = () => {
             const userId = Cookies.get('UserId') || null;
@@ -329,8 +332,8 @@ function ShoppingCart() {
                         </div>
                         {data.map((value, i) => {
                             return <div className="product" key={i}>
-                                <div className="product-image" >
-                                    <img src={`${baseurl}${value?.img}`} alt="Dingo Dog Bones" />
+                                <div className="product-image cursor-pointer" onClick={() => navigate(`/product/:${value._id}`)}>
+                                    <img src={`${baseurl}${value?.img}`} alt="product" className='mix-blend-multiply' />
                                 </div>
                                 <div className="product-details">
                                     <div className="product-title">{value?.ProductName}</div>

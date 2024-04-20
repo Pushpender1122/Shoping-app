@@ -11,7 +11,7 @@
 
 
 .reviews {
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
     background-color: #fff;
     display: flex;
     gap: 25px;
@@ -20,7 +20,7 @@
     /* раскинуть элементы внутри reviews по краям*/
     flex-wrap: wrap;
     /* разрешает переносить элементы когда уменьшается ширина */
-    border-radius: 20px;
+    /* border-radius: 20px; */
     /* радиус скругления по макету */
     padding: 70px 96px;
     /* отступы сверху и снизу по макету +- */

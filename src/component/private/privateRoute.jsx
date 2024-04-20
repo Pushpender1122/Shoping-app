@@ -6,7 +6,7 @@ const PrivateRoutes = () => {
     const { isAuthenticated } = useContext(Authentication);
 
     return (
-        isAuthenticated.isAuthenticated ? <Outlet /> : <Navigate to="/user/login" />
+        isAuthenticated.isAuthenticated ? <Outlet /> : <Navigate to="/user/login" replace />
     );
 };
 

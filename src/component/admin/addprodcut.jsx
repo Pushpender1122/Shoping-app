@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 import './addpro.css';
 
-function Addprodcut() {
+function Addprodcut({ isFromProductUpdate, apiUrl, requestType }) {
+    const Url = process.env.REACT_APP_SERVER_URL;
     const [itemData, setItemData] = useState({
-        ProductName: '',
-        ProductPrice: '',
-        stock: '',
-        Description: '',
-        Category: [], // Initialize Category as an array
+        ProductName: isFromProductUpdate?.ProductName || '',
+        ProductPrice: isFromProductUpdate?.ProductPrice || '',
+        stock: isFromProductUpdate?.Stock == 0 ? '0' : isFromProductUpdate?.Stock || '',
+        Description: isFromProductUpdate?.Description || '',
+        Category: isFromProductUpdate ? (JSON.parse(isFromProductUpdate?.Category)) : '' || '',
         item_img: [],
-        HighligthPoint: [],
+        HighligthPoint: isFromProductUpdate ? (isFromProductUpdate?.HighligthPoint) : '' || [],
     });
-
+    const [alertMessage, setAlertConfig] = useState({
+        message: '',
+        messageType: 'success'
+    });
+    // console.log(typeof isFromProductUpdate.Category[0]);
+    const api = apiUrl || 'auth/admin/addProduct';
+    const methodType = requestType || 'POST';
     const handleInputChange = (e) => {
         const { name, value, files } = e.target;
 
@@ -40,33 +48,52 @@ function Addprodcut() {
             }));
         }
     };
-
-    const handleSubmit = (e) => {
+    const notify = () => {
+        toast[alertMessage.messageType](alertMessage.message, {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
+    };
+    useEffect(() => {
+        if (alertMessage.message !== '') {
+            notify();
+        }
+    }, [alertMessage])
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append('ProductName', itemData.ProductName);
         formData.append('ProductPrice', itemData.ProductPrice);
-        formData.append('stock', itemData.stock);
+        formData.append('Stock', itemData.stock);
         formData.append('Description', itemData.Description);
         formData.append('Category', JSON.stringify(itemData.Category)); // Convert array to JSON string
         formData.append('HighligthPoint', JSON.stringify(itemData.HighligthPoint)); // Convert array to JSON string
-
-        for (let i = 0; i < itemData.item_img.length; i++) {
-            formData.append('item_img', itemData.item_img[i]);
+        if (itemData.item_img.length > 0) {
+            for (let i = 0; i < itemData.item_img.length; i++) {
+                formData.append('item_img', itemData.item_img[i]);
+            }
         }
 
-        fetch('http://localhost:7000/auth/admin/addProduct', {
-            method: 'POST',
+        const responce = await fetch(`${Url}${api}`, {
+            method: methodType,
             body: formData,
             credentials: 'include',
         })
-            .then((response) => response.json())
-            .then((result) => {
-                console.log(result);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+        const result = await responce.json();
+        console.log(result);
+        setAlertConfig({ message: result.message, messageType: result.success === 'true' ? 'success' : 'error' });
+        // .then((response) => response.json())
+        // .then((result) => {
+        //     console.log(result);
+        // })
+        // .catch((error) => {
+        //     console.error('Error:', error);
+        // });
     };
 
     return (
@@ -104,7 +131,7 @@ function Addprodcut() {
                     type="text"
                     name="Category"
                     placeholder="Category (comma-separated)"
-                    value={itemData.Category.join(', ')}
+                    value={itemData?.Category ? itemData.Category.join(', ') : ''}
                     onChange={handleInputChange}
                 />
                 <input
@@ -117,6 +144,7 @@ function Addprodcut() {
                 <input type="file" name="item_img" multiple onChange={handleInputChange} />
                 <button type="submit">Upload</button>
             </form>
+            <ToastContainer />
         </div>
     );
 }

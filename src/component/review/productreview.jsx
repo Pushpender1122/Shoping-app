@@ -64,7 +64,7 @@ const Reviews = ({ userReviews, setNeedUpdate }) => {
     }, [alertConfig])
 
     return (
-        <div className="reviews mt-14">
+        <div className="reviews mt-14" id='review'>
             <div className="reviews-left">
                 <h2>Reviews</h2>
                 <p>We always strive to provide the best service for our customers. We would be very grateful if you leave a review on our page so that other customers can learn about our work.</p>
@@ -95,7 +95,7 @@ const Reviews = ({ userReviews, setNeedUpdate }) => {
             })}
 
             {showPopup && (
-                <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-10">
                     <div className="bg-white p-6 rounded shadow-md">
                         <span className="absolute top-0 right-0 p-2 cursor-pointer" onClick={() => setShowPopup(false)}>&times;</span>
                         <h2 className="text-lg font-bold mb-4">Submit Review</h2>

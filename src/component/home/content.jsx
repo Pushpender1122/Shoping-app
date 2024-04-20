@@ -39,12 +39,12 @@ const Feed = (props) => {
         fetch(`${apiUrl}productlist`).then((response) => response.json())
             .then((result) => {
                 console.log(result);
-                setdata(result);
+                setdata(result.filterProduct);
                 setStoredData(result);
                 if (props?.productList) {
                     console.log("its run");
                     console.log(props.productList);
-                    const wishlistProducts = result.filter(product => props.productList.find(item => item.id === product._id));
+                    const wishlistProducts = result.filterProduct.filter(product => props.productList.find(item => item.id === product._id));
                     console.log(wishlistProducts.length);
                     setStoredData(wishlistProducts);
                     setdata(wishlistProducts);
