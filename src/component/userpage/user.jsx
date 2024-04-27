@@ -101,7 +101,7 @@ const UserProfile = () => {
             // Convert the image data (newImage) to a FormData object
             setProgress(20);
             const formData = new FormData();
-            formData.append('profileimage', newImage); // Assuming 'image' is the field name expected by the backend
+            formData.append('img', newImage); // Assuming 'image' is the field name expected by the backend
             setProgress(50);
             const result = await axios.post(`${apiUrl}auth/user/profile/${id}/edit/profileimage`, formData, {
                 withCredentials: true,
@@ -282,7 +282,7 @@ const UserProfile = () => {
                     <div className="bg-white rounded-lg p-6 w-80">
                         <h2 className="text-xl font-semibold mb-4">Upload New Image</h2>
                         <form encType='multipart/form-data'>
-                            <input type="file" name='profileimage' onChange={handleImageChange} />
+                            <input type="file" name='img' onChange={handleImageChange} />
                             {preimg && <img src={preimg} alt="New Profile" className="mt-4 rounded-lg w-full" />}
                             <button onClick={handleSubmit} type='submit' className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mt-4" disabled={buttonState}>Save</button>
                             <button onClick={() => setShowModal({

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import './addpro.css';
+import { Link } from 'react-router-dom';
 
 function Addprodcut({ isFromProductUpdate, apiUrl, requestType }) {
     const Url = process.env.REACT_APP_SERVER_URL;
@@ -23,7 +24,7 @@ function Addprodcut({ isFromProductUpdate, apiUrl, requestType }) {
     const handleInputChange = (e) => {
         const { name, value, files } = e.target;
 
-        if (name === 'item_img') {
+        if (name === 'img') {
             setItemData((prevData) => ({
                 ...prevData,
                 item_img: files,
@@ -75,7 +76,7 @@ function Addprodcut({ isFromProductUpdate, apiUrl, requestType }) {
         formData.append('HighligthPoint', JSON.stringify(itemData.HighligthPoint)); // Convert array to JSON string
         if (itemData.item_img.length > 0) {
             for (let i = 0; i < itemData.item_img.length; i++) {
-                formData.append('item_img', itemData.item_img[i]);
+                formData.append('img', itemData.item_img[i]);
             }
         }
 
@@ -98,6 +99,7 @@ function Addprodcut({ isFromProductUpdate, apiUrl, requestType }) {
 
     return (
         <div className='divadmin'>
+            <Link to={'/'}>Home</Link>
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <input
                     type="text"
@@ -141,7 +143,7 @@ function Addprodcut({ isFromProductUpdate, apiUrl, requestType }) {
                     value={itemData.HighligthPoint}
                     onChange={handleInputChange}
                 />
-                <input type="file" name="item_img" multiple onChange={handleInputChange} />
+                <input type="file" name="img" multiple onChange={handleInputChange} />
                 <button type="submit">Upload</button>
             </form>
             <ToastContainer />

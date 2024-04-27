@@ -211,7 +211,7 @@ const Productde = () => {
                         <div className="item-image-parent ">
                             <div className="item-image-main" >
                                 {/* Main Image */}
-                                <img src={`${baseurl}${value?.img}`} alt="default" />
+                                <img src={`${value?.img}`} alt="default" />
                             </div>
                         </div>
                         <div className="item-info-parent" >

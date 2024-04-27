@@ -9,7 +9,7 @@ import { MdOutlineCancel } from "react-icons/md";
 import { Doughnut } from "react-chartjs-2";
 import { IoIosArrowDown } from "react-icons/io";
 import './admin.css'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 
@@ -78,7 +78,7 @@ function Dashboard() {
                 hoverBackgroundColor: 'rgba(75,192,192,0.4)',
                 id: 1,
                 // label: '',
-                data: [0, data.amountEarned],
+                data: [0, data?.amountEarned],
 
             }
 
@@ -107,7 +107,7 @@ function Dashboard() {
                 <p className='flex justify-center items-center'>
                     Total Amount
                 </p>
-                <p className='flex justify-center items-center'>₹{data.amountEarned}</p>
+                <p className='flex justify-center items-center'>₹{data?.amountEarned}</p>
             </div>
             <div className='flex justify-center mt-4 product_circle'>
                 <div className='h-36 w-36 rounded-full bg-red-400 flex items-center justify-center flex-col mx-6 product-details-admin'>
@@ -212,7 +212,10 @@ function Products() {
     }, [alertMessage])
     return (
         <div id="products" className="p-4">
-            <h2 className="text-2xl font-bold mb-4">Products</h2>
+            <div className='flex justify-between'>
+                <h2 className="text-2xl font-bold mb-4">Products</h2>
+                <Link to={'/admin/addproduct'} className="text-2xl font-bold mb-4 text-black hover:text-black">Add product</Link>
+            </div>
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
@@ -228,7 +231,7 @@ function Products() {
                         {products.map(product => (
                             <tr key={product._id}>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <img src={Url + product.img[0]} alt={product.ProductName} className="h-10 w-10 object-contain" />
+                                    <img src={product.img[0]} alt={product.ProductName} className="h-10 w-10 object-contain" />
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">{product.ProductName}</td>
                                 <td className="px-6 py-4 whitespace-nowrap">{product.ProductPrice}</td>
@@ -265,7 +268,7 @@ function Products() {
                     </div>
                     <div className="flex">
                         <div className="w-1/2 pr-8 flex flex-col items-center">
-                            <img src={Url + editableItem.img[0]} alt={editableItem.productName} className="h-auto w-full mb-4" />
+                            <img src={editableItem.img[0]} alt={editableItem.productName} className="h-auto w-full mb-4" />
                             <p className="text-lg font-bold">{editableItem.ProductName}</p>
                             <p className="text-sm text-gray-500">${editableItem.ProductPrice}</p>
                         </div>
@@ -552,7 +555,7 @@ function Transactions() {
                 <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white p-8 rounded-lg shadow-lg w-3/4 flex">
                         <div className="w-1/2 pr-8 flex flex-col items-center">
-                            <img src={Url + selectedTransaction.items.image} alt={selectedTransaction.items.productName} className="h-auto w-full mb-4" />
+                            <img src={selectedTransaction.items.image} alt={selectedTransaction.items.productName} className="h-auto w-full mb-4" />
                             <p className="text-lg font-bold">{selectedTransaction.items.productName}</p>
                             <p className="text-sm text-gray-500">${selectedTransaction.items.price}</p>
                         </div>

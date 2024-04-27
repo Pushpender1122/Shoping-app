@@ -317,7 +317,7 @@ function ShoppingCart() {
                         {data.map((value, i) => {
                             return <div className="product" key={i}>
                                 <div className="product-image cursor-pointer" onClick={() => navigate(`/product/:${value._id}`)}>
-                                    <img src={`${baseurl}${value?.img}`} alt="product" className='mix-blend-multiply' />
+                                    <img src={`${value?.img}`} alt="product" className='mix-blend-multiply' />
                                 </div>
                                 <div className="product-details">
                                     <div className="product-title">{value?.ProductName}</div>

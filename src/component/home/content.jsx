@@ -184,7 +184,7 @@ const Feed = (props) => {
                         <div className="product-grid__product">
                             <div className="product-grid__img-wrapper flex justify-center">
                                 <img
-                                    src={`${baseurl}${value?.img}`}
+                                    src={`${value?.img}`}
                                     alt="Img"
                                     className="product-grid__img"
                                     onClick={(() => sendData(value._id))}

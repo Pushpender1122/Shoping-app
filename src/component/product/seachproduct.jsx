@@ -46,7 +46,7 @@ const ProductList = ({ view, product }) => {
                     return (
                         <Product
                             key={product._id}
-                            imgSrc={Baseurl + product.img}
+                            imgSrc={product.img}
                             title={product.ProductName}
                             subtitle={product.Description.slice(0, 100).concat('...')}
                             price={product.ProductPrice}

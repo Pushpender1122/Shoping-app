@@ -28,7 +28,7 @@ const SuggestedProducts = (products) => {
                 {products.products?.map(product => (
                     <div key={product._id} className='w-60 h-80 m-4 flex flex-col items-center' style={{ flex: "0 0 250px" }}>
                         <div className="suggimgDiv w-full cursor-pointer" onClick={() => goesTop(product._id)}>
-                            <img src={baseUrl + product.img} alt={product.ProductName} className='w-full h-48 object-contain mix-blend-multiply' />
+                            <img src={product.img} alt={product.ProductName} className='w-full h-48 object-contain mix-blend-multiply' />
                         </div>
                         <div className='p-4'>
                             <h3 className='text-lg font-semibold'>{product.ProductName.slice(0, 20)}</h3>
