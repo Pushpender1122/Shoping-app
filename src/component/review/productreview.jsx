@@ -10,7 +10,7 @@ const Reviews = ({ userReviews, setNeedUpdate }) => {
     const [rating, setRating] = useState(0);
     const [message, setMessage] = useState('');
     const params = useParams();
-
+    const url = process.env.REACT_APP_SERVER_URL;
     const handleRatingChange = (newRating) => {
         setRating(newRating);
     };
@@ -41,7 +41,7 @@ const Reviews = ({ userReviews, setNeedUpdate }) => {
         setRating(0);
         setMessage('');
         let userID = Cookies.get('UserId');
-        const response = await axios.post('http://localhost:7000/product/review', {
+        const response = await axios.post(`${url}product/review`, {
             userID,
             rating,
             message,

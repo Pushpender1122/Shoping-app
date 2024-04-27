@@ -208,14 +208,13 @@ const Productde = () => {
             {data.map((value, i) => { // ONLY ONE ITEM WILL BE DISPLAYED so why need loop ? 🤦‍♂️ 
                 return <div className='product-page-container' key={i}>
                     <section id="product-info">
-                        <div className="item-image-parent">
-
-                            <div className="item-image-main">
+                        <div className="item-image-parent ">
+                            <div className="item-image-main" >
                                 {/* Main Image */}
                                 <img src={`${baseurl}${value?.img}`} alt="default" />
                             </div>
                         </div>
-                        <div className="item-info-parent">
+                        <div className="item-info-parent" >
                             {/* Main Info */}
                             <div className="main-info">
                                 <h4>{value.ProductName}</h4>

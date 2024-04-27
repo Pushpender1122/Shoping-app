@@ -5,40 +5,55 @@ import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
 import { Line } from 'react-chartjs-2';
 import Addprodcut from './addprodcut';
+import { MdOutlineCancel } from "react-icons/md";
 import { Doughnut } from "react-chartjs-2";
+import { IoIosArrowDown } from "react-icons/io";
+import './admin.css'
+import { useNavigate } from 'react-router-dom';
 
 
 
 const Url = process.env.REACT_APP_SERVER_URL;
 
 function AdminPanel() {
-
+    const navigate = useNavigate();
     const [selectedMenuItem, setSelectedMenuItem] = useState('dashboard');
+    const [pathList, setPathList] = useState(null);
 
     const handleMenuClick = (item) => {
         setSelectedMenuItem(item);
     };
 
     return (
-        <div className="flex">
-            <div className="w-1/4 h-screen bg-gray-200">
-                <div className="p-4">
-                    <h1 className="text-xl font-bold mb-4">Admin Panel</h1>
-                    <ul className="space-y-2">
-                        <li><button onClick={() => handleMenuClick('dashboard')} className="block py-2 px-4 rounded hover:bg-gray-300">Dashboard</button></li>
-                        <li><button onClick={() => handleMenuClick('products')} className="block py-2 px-4 rounded hover:bg-gray-300">Products</button></li>
-                        <li><button onClick={() => handleMenuClick('customers')} className="block py-2 px-4 rounded hover:bg-gray-300">Customers</button></li>
-                        <li><button onClick={() => handleMenuClick('transactions')} className="block py-2 px-4 rounded hover:bg-gray-300">Transactions</button></li>
-                    </ul>
+        <>
+            <div className='w-screen h-10 bg-emerald-500 sm:hidden' onClick={() => pathList == 'admin-panel' ? setPathList(null) : setPathList('admin-panel')}>
+                <IoIosArrowDown className='text-3xl absolute right-1 top-2' />
+            </div>
+            <div className="flex ">
+                <div className={`w-1/4 h-screen bg-gray-200 hidden sm:block ${pathList}`}>
+                    <div className="p-4">
+                        <div className='absolute right-3 block sm:hidden' onClick={() => setPathList(null)}>
+                            <MdOutlineCancel className='text-2xl' />
+                        </div>
+                        <h1 className="hidden sm:block text-xl font-bold mb-4 ">Admin Panel</h1>
+                        <ul className="space-y-2 admin-path-list">
+                            <li><div onClick={() => { return handleMenuClick('home'), setPathList(null) }} className="block py-2 px-4 rounded hover:bg-gray-300 cursor-pointer" >Home</div></li>
+                            <li><div onClick={() => { return handleMenuClick('dashboard'), setPathList(null) }} className="block py-2 px-4 rounded hover:bg-gray-300 cursor-pointer" >Dashboard</div></li>
+                            <li><div onClick={() => { return handleMenuClick('products'), setPathList(null) }} className="block py-2 px-4 rounded hover:bg-gray-300 cursor-pointer">Products</div></li>
+                            <li><div onClick={() => { return handleMenuClick('customers'), setPathList(null) }} className="block py-2 px-4 rounded hover:bg-gray-300 cursor-pointer">Customers</div></li>
+                            <li><div onClick={() => { return handleMenuClick('transactions'), setPathList(null) }} className="block py-2 px-4 rounded hover:bg-gray-300 cursor-pointer">Transactions</div></li>
+                        </ul>
+                    </div>
+                </div>
+                <div className="w-3/4 h-screen bg-white overflow-y-scroll admin-control-panel">
+                    {selectedMenuItem === 'dashboard' && <Dashboard />}
+                    {selectedMenuItem === 'home' && navigate('/')}
+                    {selectedMenuItem === 'products' && <Products />}
+                    {selectedMenuItem === 'customers' && <Customers />}
+                    {selectedMenuItem === 'transactions' && <Transactions />}
                 </div>
             </div>
-            <div className="w-3/4 h-screen bg-white overflow-y-scroll">
-                {selectedMenuItem === 'dashboard' && <Dashboard />}
-                {selectedMenuItem === 'products' && <Products />}
-                {selectedMenuItem === 'customers' && <Customers />}
-                {selectedMenuItem === 'transactions' && <Transactions />}
-            </div>
-        </div>
+        </>
     );
 }
 
@@ -63,7 +78,7 @@ function Dashboard() {
                 hoverBackgroundColor: 'rgba(75,192,192,0.4)',
                 id: 1,
                 // label: '',
-                data: [0, 1000],
+                data: [0, data.amountEarned],
 
             }
 
@@ -92,29 +107,31 @@ function Dashboard() {
                 <p className='flex justify-center items-center'>
                     Total Amount
                 </p>
-                <p className='flex justify-center items-center'>₹1000</p>
+                <p className='flex justify-center items-center'>₹{data.amountEarned}</p>
             </div>
-            <div className='flex justify-center mt-4'>
-                <div className='h-36 w-36 rounded-full bg-red-400 flex items-center justify-center flex-col mx-6'>
+            <div className='flex justify-center mt-4 product_circle'>
+                <div className='h-36 w-36 rounded-full bg-red-400 flex items-center justify-center flex-col mx-6 product-details-admin'>
                     <p className='flex justify-center items-center font-bold'>Product</p>
                     <p className='flex justify-center items-center font-bold '>{data?.productCount}</p>
                 </div>
 
-                <div className='h-36 w-36 rounded-full bg-amber-300 flex items-center justify-center flex-col mx-6'>
+                <div className='h-36 w-36 rounded-full bg-amber-300 flex items-center justify-center flex-col mx-6 product-details-admin'>
                     <p className='flex justify-center items-center font-bold'>Orders</p>
                     <p className='flex justify-center items-center font-bold '>{data?.orderCount}</p>
                 </div>
 
-                <div className='h-36 w-36 rounded-full bg-black flex items-center justify-center flex-col mx-6'>
+                <div className='h-36 w-36 rounded-full bg-black flex items-center justify-center flex-col mx-6 product-details-admin'>
                     <p className='flex justify-center items-center text-white font-bold '>User</p>
                     <p className='flex justify-center items-center text-white font-bold '>{data?.userCount}</p>
                 </div>
             </div>
             <div>
-                <Line
-                    datasetIdKey='id'
-                    data={lineData}
-                />
+                <div className='graph-admin'>
+                    <Line
+                        datasetIdKey='id'
+                        data={lineData}
+                    />
+                </div>
 
                 <div className='w-full h-80 flex justify-center' >
                     <Doughnut data={pieData} />
@@ -265,8 +282,8 @@ function Customers() {
 
     const [customers, setCustomer] = useState([])
     const [pageNumber, setPageNumeber] = useState(1);
-    const [render, setRender] = useState(false);
     const [lastPage, setLastPage] = useState(1);
+    const [render, setRender] = useState(false);
     const [updatetedItem, setUpdatedItem] = useState(null);
     const [alertMessage, setAlertConfig] = useState({
         message: '',
@@ -426,24 +443,45 @@ function Transactions() {
 
     const [selectedTransaction, setSelectedTransaction] = useState(null);
     const [transactions, setTransaction] = useState([]);
+    const [pageNumber, setPageNumeber] = useState(1);
+    const [lastPage, setLastPage] = useState(1);
     const [render, setRender] = useState(false);
+    const [isOrderChangeView, setOrderChangeView] = useState('Pending');
+    const isPreviousDisabled = pageNumber === 1;
+    const isNextDisabled = pageNumber === lastPage;
     const handleManageClick = (transactionId) => {
         let order = transactions.find(transaction => transaction._id === transactionId);
+        console.log(order);
         setSelectedTransaction(order);
         // setSelectedTransaction(transactionId);
     };
     useEffect(() => {
         const fetchData = async () => {
-            let responce = await axios.get(`${Url}auth/admin/allorders`, { withCredentials: true });
+            let responce = await axios.get(`${Url}auth/admin/allorders?page=${pageNumber}&isOrderChangeView=${isOrderChangeView}`, { withCredentials: true });
             // setTransaction(responce.data);
+            console.log(responce);
+            setLastPage(responce.data.lastPage);
             setTransaction(responce.data.order);
         };
         fetchData();
-    }, [render])
+    }, [render, isOrderChangeView])
+    const handleNextPage = () => {
+        if (pageNumber < lastPage) {
+            setPageNumeber(pageNumber + 1);
+            setRender(!render);
+        }
+    }
+    const handlePreviousPage = () => {
+        if (pageNumber > 1) {
+            setPageNumeber(pageNumber - 1);
+            setRender(!render);
+        }
+
+    }
     const handleProcessStatus = async () => {
         try {
             const responce = await axios.post(`${Url}auth/admin/allorders/status`, { data: { orderId: selectedTransaction._id, orderStatus: 'Shipped' } }, { withCredentials: true })
-            console.log(responce)
+
             setAlertConfig({
                 message: responce.data.message,
                 messageType: responce.data.success ? 'success' : 'error'
@@ -466,6 +504,10 @@ function Transactions() {
             theme: "light",
         });
     };
+    const OrderViewChanger = () => {
+        // setTransaction(selectedTransaction);
+        setOrderChangeView(isOrderChangeView === 'Shipped' ? 'Pending' : 'Shipped');
+    }
     useEffect(() => {
         if (alertMessage.message !== '') {
             notify();
@@ -473,7 +515,10 @@ function Transactions() {
     }, [alertMessage])
     return (
         <div id="transactions" className="p-4">
-            <h2 className="text-2xl font-bold mb-4">Transactions</h2>
+            <div className='flex justify-between'>
+                <h2 className="text-2xl font-bold mb-4">Transactions</h2>
+                <h2 className='cursor-pointer' onClick={OrderViewChanger}>{isOrderChangeView == 'Shipped' ? 'Pending Order' : 'All Order'}</h2>
+            </div>
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
@@ -488,6 +533,7 @@ function Transactions() {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {transactions.map(transaction => (
+
                             <tr key={transaction._id}>
                                 <td className="px-6 py-4 whitespace-nowrap">{transaction?.items.productName}</td>
                                 <td className="px-6 py-4 whitespace-nowrap">{transaction?.items.price}</td>
@@ -516,7 +562,7 @@ function Transactions() {
                             <div className="">
                                 <h1>User Info</h1>
                                 <p>Name : {selectedTransaction.userId.name}</p>
-                                <p>Address : {selectedTransaction.userId.address}</p>
+                                <p>Address : {selectedTransaction.items.address}</p>
                             </div>
                             <div className="mb-2">
                                 <h1>Amount Info</h1>
@@ -536,7 +582,19 @@ function Transactions() {
                     </div>
                 </div>
             )}
-            <ToastContainer />
+            <div className='flex justify-center '>
+                <GrLinkPrevious
+                    className={`mx-5 cursor-pointer ${isPreviousDisabled ? 'opacity-50 pointer-events-none' : ''}`}
+                    onClick={handlePreviousPage}
+                    disabled={isPreviousDisabled}
+                />
+                <GrLinkNext
+                    className={`mx-5 cursor-pointer ${isNextDisabled ? 'opacity-50 pointer-events-none' : ''}`}
+                    onClick={handleNextPage}
+                    disabled={isNextDisabled}
+                />
+                <ToastContainer />
+            </div>
         </div>
     );
 }

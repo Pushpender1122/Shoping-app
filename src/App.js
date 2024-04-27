@@ -18,6 +18,7 @@ import ProductSearch from "./component/product/seachproduct";
 import Reviews from "./component/review/productreview";
 import SuggestedProduct from "./component/product/suggestedProduct";
 import Adminhome from "./component/admin/adminhome";
+import PaymentSuccess from "./component/checkout/paymentSucc";
 function App() {
   const { isAuthenticated } = useContext(Authentication);
   // console.log(isAuthenticated);
@@ -28,6 +29,7 @@ function App() {
           <Routes>
             <Route exact path="/" element={<Homepage />} />
             <Route element={<AdminprivateRoute />}>
+              <Route exact path="/admin/dashboard" element={<Adminhome />} />
               <Route exact path="/admin/addproduct" element={<Addprodcut />} />
             </Route>
             <Route element={<Protectedlogin />}>
@@ -37,11 +39,11 @@ function App() {
             <Route element={<PrivateRoutes />} >
               <Route path="/user/profile" element={<UserProfile />} />
               <Route exact path="/user/wishlist" element={<Wishlist />} />
+              <Route exact path="/paymentsuccess" element={<PaymentSuccess />} />
             </Route >
             <Route exact path="/product/cart" element={<CartComponent />} />
             <Route exact path="/product/:id" element={<Productde />} />
             <Route exact path="/product/search" element={<ProductSearch />} />
-            <Route exact path="/product/test" element={<Adminhome />} />
             <Route path="*" element={<Page404 />}></Route>
           </Routes>
         </BrowserRouter>

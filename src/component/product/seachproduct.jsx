@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { Rating } from 'react-simple-star-rating'
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom'
+import { CiFilter } from "react-icons/ci";
 import { SerachlistProvider } from '../context/serchContext';
 import InfiniteScroll from 'react-infinite-scroll-component';
 const Baseurl = process.env.REACT_APP_SERVER_URL
@@ -79,7 +80,9 @@ const ProductPage = () => {
         priceRange: '',
         productName: ''
     });
+    const apiurl = process.env.REACT_APP_SERVER_URL
     const [product, setProduct] = useState([]);
+    const [isFiltervisible, setFilterVisible] = useState(false)
     const [loader, setLoader] = useState(true);
     const { serachList } = React.useContext(SerachlistProvider);
     useEffect(() => {
@@ -89,7 +92,7 @@ const ProductPage = () => {
     }, [serachList, filters])
     useEffect(() => {
         var getData = setTimeout(() => {
-            let url = `http://localhost:7000/productList?rating=${filters.rating}&category=${filters.category}&productname=${serachList}&page=${page}`;
+            let url = `${apiurl}productList?rating=${filters.rating}&category=${filters.category}&productname=${serachList}&page=${page}`;
             if (filters.priceRange) {
                 url += `&price=0-${filters.priceRange}`;
             }
@@ -98,6 +101,7 @@ const ProductPage = () => {
                     setProduct((prev) => [...prev, ...res.data.filterProduct]);
                     // setProduct(res.data.filterProduct)
                     console.log(res.data)
+                    setFilterVisible(false)
                     setLastPage(res.data.lastPage)
                     setLoader(false);
                 })
@@ -118,20 +122,21 @@ const ProductPage = () => {
         <>
             <Header />
             <link href="https://fonts.googleapis.com/css?family=Raleway:400,600,700,800" rel='stylesheet' type='text/css' />
-            <div className='flex '>
-                <ProductFilter filters={filters} onFiltersChange={handleFiltersChange} />
+            <div className='text-2xl flex justify-center items-center cursor-pointer md:hidden' onClick={() => setFilterVisible((prev) => !prev)}>filter<CiFilter className='text-3xl' /></div>
+            <div className='flex'>
+                <div className={`${isFiltervisible ? 'fixed inset-0 z-50 bg-white' : 'hidden'}  md:block`}>
+                    <ProductFilter filters={filters} onFiltersChange={handleFiltersChange} setFilterVisible={setFilterVisible} />
+                </div>
                 {loader ? <img src="/loader.gif" className='h-56 w-auto mix-blend-multiply m-auto' alt="" /> : (product.length > 0 ? <ProductList view={view} product={product} /> : <div class="text-center text-gray-500 mt-4 font-medium text-xl m-auto">No Product found 😢</div>
                 )}
-
                 {/* <Tools onViewChange={handleViewChange} /> */}
             </div>
             <InfiniteScroll
                 dataLength={product.length}
                 next={fetchData}
-                hasMore={page !== lastPage}
+                hasMore={page !== lastPage && product.length > 0}
                 loader={<img src="/loader.gif" className='h-56 w-auto mix-blend-multiply m-auto' alt="" />}
             >
-
             </InfiniteScroll>
         </>
     );

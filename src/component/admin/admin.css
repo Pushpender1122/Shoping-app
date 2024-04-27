@@ -1,0 +1,36 @@
+@media (max-width: 580px) {
+    .product_circle {
+        /* display: flex; */
+        flex-direction: column;
+        /* justify-content: center; */
+        align-items: center;
+    }
+
+    .product-details-admin {
+        margin: 10px 0;
+    }
+
+    .graph-admin {
+        /* width: 100vw; */
+        /* height: 0vh; */
+    }
+
+    .admin-panel {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        background: white;
+        transform: translateX(-50%);
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        z-index: 999;
+    }
+
+
+
+    .admin-control-panel {
+        width: 100%;
+    }
+}

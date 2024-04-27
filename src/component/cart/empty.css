@@ -206,3 +206,21 @@ body {
         opacity: 0;
     }
 }
+
+@media (max-width:580px) {
+    .svgg {
+        max-width: 100%;
+        padding: 5rem 1rem;
+    }
+
+    .empty-cart-h3 {
+        font-size: 1.5rem;
+        line-height: 1.5rem;
+    }
+
+    .empty-cart-p {
+        font-size: 16px;
+        line-height: 20px;
+    }
+
+}

@@ -203,7 +203,54 @@
 
     .reviews-right {
         flex-direction: column;
-        /* развернул по вертикали */
         gap: 10px;
+    }
+
+    .reviews-left p {
+        font-size: small;
+    }
+
+    .add-reviews {
+        position: absolute;
+        right: 20px;
+    }
+
+    .reviews-right__avatar {
+        padding-right: 0;
+    }
+
+    .reviews-right__avatar .img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .reviews-right__item h3 {
+        font-size: 18px;
+    }
+
+    .block-tour span {
+        font-size: 14px;
+    }
+
+    .block-tour a {
+        font-size: 14px;
+    }
+
+    .reviews-right__nav {
+        justify-content: center;
+    }
+
+    .pagination {
+        margin-right: 0;
+    }
+
+    .pagination .bullet {
+        width: 10px;
+        height: 10px;
+    }
+
+    .reviews-right__nav button {
+        width: 40px;
+        height: 40px;
     }
 }

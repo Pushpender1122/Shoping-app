@@ -198,24 +198,22 @@ const UserProfile = () => {
             <Header />
             <div className="max-w-3xl mx-auto px-4 py-8">
                 {/* Profile Header */}
-                <div className="bg-white rounded-lg shadow-md p-6 mb-6 flex items-center">
+                <div className="bg-white rounded-lg shadow-md p-6 mb-6 flex flex-col sm:flex-row sm:items-center">
                     {/* Profile Picture */}
-                    <div className="w-20 h-20 overflow-hidden rounded-full mr-4 cursor-pointer" onClick={() => handleClick(data.img)} >
-                        <img src={data.img || "https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg"} alt="Profile" className="w-full h-full object-cover" />                    </div>
-                    {/* User Information */}
-                    <div>
-                        <h1 className="text-2xl font-semibold">Your Profile</h1>
+                    <div className="w-20 h-20 md:w-32 md:h-32 overflow-hidden rounded-full mr-4 cursor-pointer" onClick={() => handleClick(data.img)}>
+                        <img src={data.img || "https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg"} alt="Profile" className="w-full h-full object-cover" />
+                    </div>
+
+                    <div className="flex-1">
+                        <h1 className="text-2xl  font-semibold">Your Profile</h1>
                         <p className="text-gray-500">Manage your account details here.</p>
                     </div>
-                    {/* Edit Profile Button */}
-                    <button className="ml-auto bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md" onClick={() => setShowModal({
+                    <button className="mt-4 md:mt-0 ml-auto bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md" onClick={() => setShowModal({
                         ...showModal,
                         forImage: true
                     })}>Edit Profile Picture</button>
-                    {/* <button onClick={} className="absolute inset-0 bg-black bg-opacity-50 w-full h-full flex items-center justify-center text-white text-sm font-semibold focus:outline-none hid ">
-                        Edit Image
-                    </button> */}
                 </div>
+
                 {/* User Details Section */}
                 <div className="bg-white rounded-lg shadow-md p-6 mb-6">
                     <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
@@ -251,10 +249,10 @@ const UserProfile = () => {
                         </select>
                     </div>
                     {/* Create New Address */}
-                    <div>
-                        <h3 className="text-lg font-semibold mb-2">Add New Address</h3>
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md" onClick={() => setShowModal({ ...showModal, forAddress: true })}>Create New Address</button>
-                        <button onClick={() => { setShowModal((prev) => ({ ...prev, forEditAddress: true })) }} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md ml-3">
+                    <div className="flex flex-col  md:flex-row md:items-start">
+                        <h3 className="text-lg md:text-xl font-semibold mb-2">Add New Address</h3>
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md mt-2 md:mt-0 md:ml-3" onClick={() => setShowModal({ ...showModal, forAddress: true })}>Create New Address</button>
+                        <button onClick={() => { setShowModal((prev) => ({ ...prev, forEditAddress: true })) }} className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md mt-2 md:mt-0 md:ml-3">
                             Edit Address
                         </button>
                     </div>

@@ -10,7 +10,9 @@ import { SerachlistProvider } from '../context/serchContext';
 const Header = () => {
     const [cookiestate, setCookiestate] = useState(null);
     const [showAlert, setShowAlert] = useState(false);
+    const [checkAdmin, setCheckAdmin] = useState(false);
     const { isAuthenticated, setIsAuthenticated } = useContext(Authentication);
+    const [showList, setShowList] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const { serachList, setSearchList } = useContext(SerachlistProvider);
     const apiUrl = process.env.REACT_APP_SERVER_URL;
@@ -20,6 +22,10 @@ const Header = () => {
     });
     useEffect(() => {
         const cookie = Cookies.get('Auth');
+        const userRole = Cookies.get('UserRole');
+        if (userRole === 'admin') {
+            setCheckAdmin(true);
+        }
         console.log(cookie);
         setCookiestate(cookie);
         const handleClickOutside = (event) => {
@@ -96,6 +102,9 @@ const Header = () => {
     const handleProductSearch = () => {
         navigate("/product/search");
     }
+    const handleNavClick = () => {
+        setShowList(false)
+    }
     return (
         <header>
 
@@ -138,8 +147,9 @@ const Header = () => {
                                 <i className="fas fa-user-circle"></i><span className="login-text"></span> <span className="item-arrow"></span>
                                 {/* submenu */}
                                 <ul className={`login-list ${isOpen ? '' : 'hidden'}`}>
-                                    {cookiestate ? <Link className='login-a' to="/user/profile"><li className="login-list-item">My account</li></Link> : null}
+                                    {cookiestate ? <Link className='login-a' to="/user/profile"><li className="login-list-item" onClick={() => setIsOpen(false)}>My account</li></Link> : null}
                                     {cookiestate ? null : <Link className='login-a' to="/user/signup"><li className="login-list-item">Create account</li></Link>}
+                                    {checkAdmin ? <Link className='login-a' to="/admin/dashboard"><li className="login-list-item">Admin Dashboard</li></Link> : null}
                                     {cookiestate ? <Link className='login-a' onClick={handleLogout}><li className="login-list-item">Logout</li></Link> : null}
                                 </ul>
                             </label>
@@ -154,41 +164,29 @@ const Header = () => {
             <div className="nav-container">
                 <nav className="all-category-nav">
                     <label className="open-menu-all" htmlFor="open-menu-all">
-                        <input className="input-menu-all" id="open-menu-all" type="checkbox" name="menu-open" />
+                        <input className="input-menu-all" id="open-menu-all" type="checkbox" name="menu-open" checked={showList} onChange={(e) => (setShowList(e.target.checked))} />
                         <span className="all-navigator"><i className="fas fa-bars"></i> <span>All category</span> <i className="fas fa-angle-down"></i>
                             <i className="fas fa-angle-up"></i>
                         </span>
 
-                        <ul className="all-category-list">
-                            <li className="all-category-list-item"><a href="#" className="all-category-list-link">Smartphones<i className="fas fa-angle-right"></i></a>
-                                <div className="category-second-list">
-                                    <ul className="category-second-list-ul">
-                                        <li className="category-second-item"><a href="#">Iphone 10</a></li>
-                                        <li className="category-second-item"><a href="#">Galaxy Note 10</a></li>
-                                        <li className="category-second-item"><a href="#">Motorola One </a></li>
-                                        <li className="category-second-item"><a href="#">Galaxy A80 </a></li>
-                                        <li className="category-second-item"><a href="#">Galaxy M </a></li>
-                                        <li className="category-second-item"><a href="#">Huaway P30 </a></li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li className="all-category-list-item"><a href="#" className="all-category-list-link">Furniture <i className="fas fa-angle-right"></i></a></li>
-                            <li className="all-category-list-item"><a href="#" className="all-category-list-link">Toys<i className="fas fa-angle-right"></i></a></li>
-                            <li className="all-category-list-item"><a href="#" className="all-category-list-link">Computing<i className="fas fa-angle-right"></i></a></li>
-                            <li className="all-category-list-item"><a href="#" className="all-category-list-link">Games<i className="fas fa-angle-right"></i></a></li>
-                            <li className="all-category-list-item"><a href="" className="all-category-list-link">Automotive<i className="fas fa-angle-right"></i></a></li>
+                        <ul className={`all-category-list `}>
+                            <li className="all-category-list-item"><Link to="/product/search" className="all-category-list-link" onClick={() => (setSearchList('phone'), handleNavClick())}>Smartphones<i className="fas fa-angle-right"></i></Link></li>
+                            <li className="all-category-list-item"><Link to="/product/search" className="all-category-list-link" onClick={() => (setSearchList('Furniture'), handleNavClick())}>Furniture <i className="fas fa-angle-right"></i></Link></li>
+                            <li className="all-category-list-item"><Link to="/product/search" className="all-category-list-link" onClick={() => (setSearchList('toys'), handleNavClick())}>Toys<i className="fas fa-angle-right"></i></Link></li>
+                            <li className="all-category-list-item"><Link to="/product/search" className="all-category-list-link" onClick={() => (setSearchList('computer'), handleNavClick())}>Computing<i className="fas fa-angle-right"></i></Link></li>
+                            <li className="all-category-list-item"><Link to="/product/search" className="all-category-list-link" onClick={() => (setSearchList('games'), handleNavClick())}>Games<i className="fas fa-angle-right"></i></Link></li>
 
                         </ul>
                     </label>
                 </nav>
                 <nav className="featured-category">
                     <ul className="nav-row">
-                        <li className="nav-row-list"><a href="#" className="nav-row-list-link">Smartphones</a></li>
-                        <li className="nav-row-list"><a href="#" className="nav-row-list-link">furniture</a></li>
-                        <li className="nav-row-list"><a href="#" className="nav-row-list-link">Toys</a></li>
-                        <li className="nav-row-list"><a href="#" className="nav-row-list-link">Computing</a></li>
-                        <li className="nav-row-list"><a href="#" className="nav-row-list-link">Games</a></li>
-                        <li className="nav-row-list"><a href="#" className="nav-row-list-link">Automotive</a></li>
+                        <li className="nav-row-list"><Link to="/product/search" onClick={() => setSearchList('phone')} className="nav-row-list-link">Smartphones</Link></li>
+                        <li className="nav-row-list"><Link to="/product/search" onClick={() => setSearchList('Furniture')} className="nav-row-list-link">furniture</Link></li>
+                        <li className="nav-row-list"><Link to="/product/search" onClick={() => setSearchList('toys')} className="nav-row-list-link">Toys</Link></li>
+                        <li className="nav-row-list"><Link to="/product/search" onClick={() => setSearchList('computer')} className="nav-row-list-link">Computing</Link></li>
+                        <li className="nav-row-list"><Link to="/product/search" onClick={() => setSearchList('games')} className="nav-row-list-link">Games</Link></li>
+
                     </ul>
                 </nav>
             </div>

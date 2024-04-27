@@ -92,3 +92,32 @@
 .STOCK {
     display: inline-block;
 }
+
+
+@media (max-width:580px) {
+    #product-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    .item-image-main {
+        width: 100vw;
+    }
+
+    .item-image-main img {
+        width: 100%;
+    }
+
+    .item-image-parent {
+        width: 100%;
+    }
+
+    .item-info-parent {
+        width: 100%;
+    }
+
+    .main-info>h4 {
+        padding-top: 22px;
+    }
+}

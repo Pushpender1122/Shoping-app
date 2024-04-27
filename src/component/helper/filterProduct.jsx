@@ -1,13 +1,21 @@
 import React from 'react';
+import { MdOutlineCancel } from 'react-icons/md';
 
-const ProductFilter = ({ filters, onFiltersChange }) => {
+const ProductFilter = ({ filters, onFiltersChange, setFilterVisible }) => {
     const handleFiltersChange = (updatedFilters) => {
         // Pass the updated filters to the parent component (ProductSearch)
+        if (!updatedFilters.priceRange) {
+
+            setFilterVisible(false);
+        }
+
         onFiltersChange(updatedFilters);
     };
 
     return (
+
         <div className="bg-white shadow-md rounded overflow-hidden w-64 h-screen  top-0 left-0 flex flex-col  pr-6">
+            <div onClick={() => setFilterVisible((prev) => !prev)}><MdOutlineCancel className='text-2xl absolute right-8 top-3 md:hidden' /></div>
             <div className="p-4 flex justify-between items-center border-b border-gray-200">
                 <h2 className="text-lg font-medium">Filters</h2>
             </div>
@@ -73,6 +81,7 @@ const ProductFilter = ({ filters, onFiltersChange }) => {
                 </div>
             </div>
         </div>
+
     );
 };
 

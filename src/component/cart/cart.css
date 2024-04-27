@@ -203,7 +203,7 @@
 }
 
 /* Make adjustments for tablet */
-@media screen and (max-width: 650px) {
+@media screen and (max-width: 750px) {
     .shopping-cart {
         margin: 0;
         padding-top: 20px;
@@ -242,9 +242,9 @@
         margin-left: 20px;
     }
 
-    .product-quantity:before {
+    /* .product-quantity:before {
         content: 'x';
-    }
+    } */
 
     .product-removal {
         width: auto;
@@ -257,7 +257,28 @@
 }
 
 /* Make more adjustments for phone */
-@media screen and (max-width: 350px) {
+@media screen and (max-width: 580px) {
+    .h1 {
+        margin-bottom: 30px;
+        font-weight: 500 !important;
+        margin-left: 10px;
+    }
+
+    .Cart_item_row {
+        display: flex;
+        /* border: 2px solid black; */
+        margin-top: 60px;
+        width: 100%;
+    }
+
+    .product-price {
+        display: none;
+    }
+
+    .product {
+        margin-left: 10px;
+    }
+
     .product-removal {
         float: right;
     }
@@ -267,10 +288,11 @@
         clear: left;
         width: auto;
         margin-top: 10px;
+        margin-right: 10px;
     }
 
     .product .product-line-price:before {
-        content: 'Item Total: ₹';
+        content: 'Item Price: ₹';
     }
 
     .totals .totals-item label {
@@ -279,5 +301,9 @@
 
     .totals .totals-item .totals-value {
         width: 40%;
+    }
+
+    .totals {
+        margin-right: 10px;
     }
 }

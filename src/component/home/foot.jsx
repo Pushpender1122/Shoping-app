@@ -7,10 +7,10 @@ const Footer = () => {
     return (
         <footer className="footer">
             <div className="footer-container">
-                <div className="footer-info">
-                    <img src="{Logo}" alt="Your Shop Logo" className="footer-logo" />
+                <div className="footer-info ">
+                    <img src="/logo-no-background.png" alt="QuikCyber Ecom" className="footer-logo bg-blend-multiply " />
                     <p className="footer-text">
-                        Copyright &copy; {new Date().getFullYear()} Your Shop Name. All Rights Reserved.
+                        Copyright &copy; {new Date().getFullYear()} QuikCyber Ecom. All Rights Reserved.
                     </p>
                 </div>
                 <nav className="footer-nav">
@@ -25,7 +25,7 @@ const Footer = () => {
                 <div className="footer-social">
                     <a href="#"><FontAwesomeIcon icon={faFacebook} /></a>
                     <a href="#"><FontAwesomeIcon icon={faTwitter} /></a>
-                    <a href="#"><FontAwesomeIcon icon={faInstagram} /></a>
+                    <a href="https://www.instagram.com/jangra.pushpender/" target='_black'><FontAwesomeIcon icon={faInstagram} /></a>
                 </div>
             </div>
         </footer>

@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Cookies from 'js-cookie';
 import Header from '../home/header';
 import { useNavigate } from 'react-router-dom';
+import CheckoutPage from '../checkout/checkoutpage';
 function EmptyCart() {
     return (
         <div className="empty-cart">
@@ -69,10 +70,12 @@ function EmptyCart() {
 function ShoppingCart() {
     const apiUrl = process.env.REACT_APP_SERVER_URL;
     console.log(apiUrl);
+    let grandTotalMoney = 0;
     const baseurl = apiUrl;
     const [cartItem, setCartItems] = useState([]);
     const [data, setData] = useState([]);
     const [userId, setuserId] = useState(null);
+    const [isPopupOpen, setPopupOpen] = useState(false);
     const [alertoption, setAlertMessage] = useState({
         alertType: "info",
         alertMessage: ""
@@ -89,7 +92,17 @@ function ShoppingCart() {
         });
     };
     const navigate = useNavigate();
-
+    const handleCheckoutDetails = () => {
+        if (userId) {
+            setPopupOpen(true);
+        }
+        else {
+            setAlertMessage({
+                alertType: "info",
+                alertMessage: "Please login first"
+            })
+        }
+    };
     useEffect(() => {
         const fetchCartItems = () => {
             const userId = Cookies.get('UserId') || null;
@@ -268,7 +281,7 @@ function ShoppingCart() {
                 }
             });
         }
-
+        grandTotalMoney = (total + 30).toFixed(2);
         return (total + 30).toFixed(2); // Convert to 2 decimal places and add 30 for shipping or any other fees
     };
     const handledescriptionLimit = (value, limit) => {
@@ -278,35 +291,6 @@ function ShoppingCart() {
         var text = value.slice(0, limit);
         return text.concat(text, '...');
 
-    }
-    const handleCheckout = async () => {
-        if (userId) {
-            const result = await axios.post(`${apiUrl}auth/user/profile/${userId}/orders/createorder`, { "data": cartItem });
-            console.log(result);
-            if (result.data.message == "Orders placed successfully") {
-                setAlertMessage({
-                    alertType: "success",
-                    alertMessage: result.data.message
-                });
-                setTimeout(() => {
-                    setCartItems([]);
-                    localStorage.clear(`CartList_${userId}`);
-                    localStorage.clear(`TempCart${userId}`);
-                }, 3000);
-            } else {
-
-                setAlertMessage({
-                    alertType: "error",
-                    alertMessage: result.data.message
-                });
-            }
-        }
-        else {
-            setAlertMessage({
-                alertType: "info",
-                alertMessage: "Please login first "
-            });
-        }
     }
     useEffect(() => {
         if (alertoption.alertMessage !== '') {
@@ -319,7 +303,7 @@ function ShoppingCart() {
             {((localStorage.getItem('TempCart') === null || JSON.parse(localStorage.getItem('TempCart')).length === 0) && (localStorage.getItem(`CartList_${userId}`) === null || JSON.parse(localStorage.getItem(`CartList_${userId}`)).length === 0))
                 ? (
                     <EmptyCart />
-                ) : (
+                ) : ((cartItem && data) &&
                     <div className="shopping-cart mx-28">
                         <h1 className='h1'>Shopping Cart</h1>
                         <div className="column-labels">
@@ -339,14 +323,16 @@ function ShoppingCart() {
                                     <div className="product-title">{value?.ProductName}</div>
                                     <p className="product-description">{handledescriptionLimit(value?.Description, 60)}</p>
                                 </div>
-                                <div className="product-price">{value?.ProductPrice}</div>
-                                <div className="product-quantity ">
-                                    <span className="button bg-indigo-600 py-1 px-2 text-xl font-bold cursor-pointer" onClick={(e) => handleQuantityChange(value._id, -1)}>-</span>
-                                    <span className='product-que-span px-3  bg-slate-200'>{cartItem.find(item => item.id === value._id)?.numberOfItems || 1}</span>
-                                    <span className="button bg-indigo-600 py-1 px-2 text-xl font-bold cursor-pointer" onClick={(e) => handleQuantityChange(value._id, 1)}>+</span>
-                                </div>
-                                <div className="product-removal pl-4">
-                                    <button className="remove-product" onClick={(e) => { handleProductDelete(value._id) }}>Remove</button>
+                                <div className='Cart_item_row'>
+                                    <div className="product-price">{value?.ProductPrice}</div>
+                                    <div className="product-quantity ">
+                                        <span className="button bg-indigo-600 py-1 px-2 text-xl font-bold cursor-pointer" onClick={(e) => handleQuantityChange(value._id, -1)}>-</span>
+                                        <span className='product-que-span px-3  bg-slate-200'>{cartItem.find(item => item.id === value._id)?.numberOfItems || 1}</span>
+                                        <span className="button bg-indigo-600 py-1 px-2 text-xl font-bold cursor-pointer" onClick={(e) => handleQuantityChange(value._id, 1)}>+</span>
+                                    </div>
+                                    <div className="product-removal pl-4">
+                                        <button className="remove-product" onClick={(e) => { handleProductDelete(value._id) }}>Remove</button>
+                                    </div>
                                 </div>
                                 <div className="product-line-price">{value?.ProductPrice * cartItem.find(item => item.id === value._id)?.numberOfItems || 1}</div>
                             </div>
@@ -365,10 +351,11 @@ function ShoppingCart() {
                                 <div className="totals-value" id="cart-total">{grandTotal()}</div>
                             </div>
                         </div>
-                        <button className="checkout my-6" onClick={handleCheckout}>Checkout</button>
+                        <button className="checkout my-6" onClick={handleCheckoutDetails}>Checkout</button>
                     </div >)
             }
             <ToastContainer />
+            <CheckoutPage isPopupOpen={isPopupOpen} setPopupOpen={setPopupOpen} grandTotal={grandTotalMoney} />
         </>
     );
 }
