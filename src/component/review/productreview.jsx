@@ -64,7 +64,7 @@ const Reviews = ({ userReviews, setNeedUpdate }) => {
     }, [alertConfig])
 
     return (
-        <div className="reviews mt-14" id='review'>
+        <div className="reviews " id='review'>
             <div className="reviews-left">
                 <h2>Reviews</h2>
                 <p>We always strive to provide the best service for our customers. We would be very grateful if you leave a review on our page so that other customers can learn about our work.</p>

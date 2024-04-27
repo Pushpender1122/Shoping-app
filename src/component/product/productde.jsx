@@ -206,7 +206,7 @@ const Productde = () => {
         <>
             <Header />
             {data.map((value, i) => { // ONLY ONE ITEM WILL BE DISPLAYED so why need loop ? 🤦‍♂️ 
-                return <div className='product-page-container' key={i}>
+                return <div className='product-page-container bg-white' key={i}>
                     <section id="product-info">
                         <div className="item-image-parent ">
                             <div className="item-image-main" >
