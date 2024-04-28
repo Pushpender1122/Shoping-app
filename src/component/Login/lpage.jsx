@@ -65,9 +65,9 @@ const Lpage = () => {
                         });
                     }, 2000);
 
-                    Cookies.set('Auth', 'Loggedin', { expires: 1 / 24 });
-                    Cookies.set('UserRole', result.userRole, { expires: 1 / 24 });
-                    Cookies.set('UserId', result.userId, { expires: 1 / 24 });
+                    Cookies.set('Auth', 'Loggedin', { expires: 31 });
+                    Cookies.set('UserRole', result.userRole, { expires: 31 });
+                    Cookies.set('UserId', result.userId, { expires: 31 });
 
                     setError('hideElement');
                     setShowAlert(true);
