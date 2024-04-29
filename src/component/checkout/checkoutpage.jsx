@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { ToastContainer, toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 const CheckoutPage = ({ isPopupOpen, setPopupOpen, grandTotal }) => {
     // const [isPopupOpen, setPopupOpen] = useState(false);
     const apiUrl = process.env.REACT_APP_SERVER_URL;
@@ -168,6 +168,21 @@ const CheckoutPage = ({ isPopupOpen, setPopupOpen, grandTotal }) => {
         });
         rzp1.open();
     }
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (!event.target.closest('.bg-white') && !event.target.classList.contains('checkout')) {
+                setPopupOpen(false);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, [isPopupOpen]);
+
+
     return (
         <div className="container mx-auto mt-8">
             {isPopupOpen && (
@@ -184,14 +199,16 @@ const CheckoutPage = ({ isPopupOpen, setPopupOpen, grandTotal }) => {
                                     <div className="text-blue-500" onClick={creatOrder}>Select</div>
                                 </li>
                             ))}
+                            <Link to={'/user/profile'}>Add new address</Link>
                         </ul>
-
                     </div>
                 </div>
             )}
             <ToastContainer />
-        </div >
+        </div>
     );
+
+
 };
 
 export default CheckoutPage;
