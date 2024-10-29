@@ -104,13 +104,16 @@ function ShoppingCart() {
         }
     };
     useEffect(() => {
-        const fetchCartItems = () => {
+        const fetchCartItems = async () => {
             const userId = Cookies.get('UserId') || null;
 
             if (userId) {
                 // User is logged in, fetch their cart items
                 setuserId(userId);
-                const storedUserCartItems = JSON.parse(localStorage.getItem(`CartList_${userId}`));
+                const storedUserCartItems = await new Promise((resolve, reject) => {
+                    resolve(JSON.parse(localStorage.getItem(`CartList_${userId}`)));
+                });
+                // const storedUserCartItems = JSON.parse(localStorage.getItem(`CartList_${userId}`))
                 setCartItems(storedUserCartItems || []);
 
                 // Merge tempCart items into user's cart
@@ -297,13 +300,14 @@ function ShoppingCart() {
             notify();
         }
     }, [alertoption])
+
     return (
         <>
             <Header />
             {((localStorage.getItem('TempCart') === null || JSON.parse(localStorage.getItem('TempCart')).length === 0) && (localStorage.getItem(`CartList_${userId}`) === null || JSON.parse(localStorage.getItem(`CartList_${userId}`)).length === 0))
                 ? (
                     <EmptyCart />
-                ) : ((cartItem && data) &&
+                ) : ((cartItem.length > 0 && data.length > 0) &&
                     <div className="shopping-cart mx-28">
                         <h1 className='h1'>Shopping Cart</h1>
                         <div className="column-labels">
@@ -337,21 +341,25 @@ function ShoppingCart() {
                                 <div className="product-line-price">{value?.ProductPrice * cartItem.find(item => item.id === value._id)?.numberOfItems || 1}</div>
                             </div>
                         })}
-                        <div className="totals ">
-                            <div className="totals-item">
-                                <label className='label'>Subtotal</label>
-                                <div className="totals-value" id="cart-subtotal">{calculateTotal()}</div>
-                            </div>
-                            <div className="totals-item">
-                                <label className='label'>Shipping</label>
-                                <div className="totals-value" id="cart-shipping">30.00</div>
-                            </div>
-                            <div className="totals-item totals-item-total">
-                                <label className='label'>Grand Total</label>
-                                <div className="totals-value" id="cart-total">{grandTotal()}</div>
-                            </div>
-                        </div>
-                        <button className="checkout my-6" onClick={handleCheckoutDetails}>Checkout</button>
+                        {(cartItem?.length > 0 && data.length > 0) && (
+                            <>
+                                <div className="totals ">
+                                    <div className="totals-item">
+                                        <label className='label'>Subtotal</label>
+                                        <div className="totals-value" id="cart-subtotal">{calculateTotal()}</div>
+                                    </div>
+                                    <div className="totals-item">
+                                        <label className='label'>Shipping</label>
+                                        <div className="totals-value" id="cart-shipping">30.00</div>
+                                    </div>
+                                    <div className="totals-item totals-item-total">
+                                        <label className='label'>Grand Total</label>
+                                        <div className="totals-value" id="cart-total">{grandTotal()}</div>
+                                    </div>
+                                </div>
+                                <button className="checkout my-6" onClick={handleCheckoutDetails}>Checkout</button>
+                            </>
+                        )}
                     </div >)
             }
             <ToastContainer />
