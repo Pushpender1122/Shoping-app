@@ -137,7 +137,9 @@ function ShoppingCart() {
                 localStorage.removeItem('TempCart');
             } else {
                 // User is not logged in, fetch cart items from temporary storage
-                const storedTempCartItems = JSON.parse(localStorage.getItem('TempCart'));
+                const storedTempCartItems = await new Promise((resolve, reject) => {
+                    resolve(JSON.parse(localStorage.getItem('TempCart')));
+                });
                 setCartItems(storedTempCartItems || []);
             }
         };
@@ -157,10 +159,9 @@ function ShoppingCart() {
             }
         };
 
-        // if (cartItem.length > 0) {
-        getTheCartList();
-
-        // }
+        if (cartItem.length > 0) {
+            getTheCartList();
+        }
     }, [cartItem]);
     const handleQuantityChange = (id, newQuantity) => {
         const userId = Cookies.get('UserId') || null;
