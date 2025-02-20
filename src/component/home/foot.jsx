@@ -8,9 +8,9 @@ const Footer = () => {
         <footer className="footer">
             <div className="footer-container">
                 <div className="footer-info ">
-                    <img src="/logo-no-background.png" alt="QuikCyber Ecom" className="footer-logo bg-blend-multiply " />
+                    <img src="/logo-no-background.png" alt="Quick-Cyberecom" className="footer-logo bg-blend-multiply " />
                     <p className="footer-text">
-                        Copyright &copy; {new Date().getFullYear()} QuikCyber Ecom. All Rights Reserved.
+                        Copyright &copy; {new Date().getFullYear()} Quick-Cyberecom. All Rights Reserved.
                     </p>
                 </div>
                 <nav className="footer-nav">
