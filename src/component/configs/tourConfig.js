@@ -25,8 +25,21 @@ export const adminTourConfig = {
     steps: [
         { element: '#product_count', popover: { title: 'Product', description: 'Total number of products in the store.', side: "left", align: 'start' } },
         { element: '#order_count', popover: { title: 'Orders', description: 'Total number of orders in the store.', side: "left", align: 'start' } },
-        { element: '#user_count', popover: { title: 'Users', description: 'Total number of users in the store.', side: "left", align: 'start' } },
-        { element: '#admin_home', popover: { title: 'Admin Home', description: 'You can click here to go back to the home page.', side: "left", align: 'start' } },
+        {
+            element: '#user_count', popover: {
+                title: 'Users', description: 'Total number of users in the store.', side: "left", align: 'start',
+                onNextClick: () => {
+                    document.dispatchEvent(new CustomEvent('driver-move-next'));
+                },
+            }
+        },
+        {
+            element: '#admin_home', popover: {
+                title: 'Admin Home', description: 'You can click here to go back to the home page.', side: "left", align: 'start', onPrevClick: () => {
+                    document.dispatchEvent(new CustomEvent('driver-move-prev'));
+                }
+            }
+        },
         { element: '#admin_products', popover: { title: 'Admin Product', description: 'You can click here to view all products.', side: "left", align: 'start' } },
         { element: '#admin_customers', popover: { title: 'Admin User', description: 'You can click here to view all users.', side: "left", align: 'start' } },
         { element: '#admin_transactions', popover: { title: 'Admin Order', description: 'You can click here to view all orders.', side: "left", align: 'start' } },

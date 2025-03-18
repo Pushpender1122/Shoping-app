@@ -15,10 +15,10 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const Url = process.env.REACT_APP_SERVER_URL;
 
-function AdminPanel() {
+function AdminPanel({ pathList, setPathList }) {
     const navigate = useNavigate();
     const [selectedMenuItem, setSelectedMenuItem] = useState('dashboard');
-    const [pathList, setPathList] = useState(null);
+
 
     const handleMenuClick = (item) => {
         setSelectedMenuItem(item);
