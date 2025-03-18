@@ -1,11 +1,22 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 // import logo from '../img/logo.jpg'
 import { Link } from 'react-router-dom';
 import './login.css'
 import Cookies from 'js-cookie';
 import Alert from '../alerts/alert';
 import { Authentication } from '../context/auth';
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
+import { initializeLoginTour as loginTour } from '../configs/tour';
+// import { loginTourConfig } from '../configs/tourConfig';
 const Lpage = () => {
+    // const loginDriver = driver(loginTourConfig)
+    useEffect(() => {
+        loginTour().drive()
+        return () => {
+            loginTour().destroy()
+        }
+    }, [])
     const alertimgurl = 'http://100dayscss.com/codepen/alert.png';
     // const successimgurl = 'https://media.istockphoto.com/id/1079725292/vector/green-tick-checkmark-vector-icon-for-checkbox-marker-symbol.jpg?s=612x612&w=0&k=20&c=OvOpxX8ZFuc5NufZTJDbpwGKvgFUmfZjY68MICmEzX4=';
     const [error, setError] = useState('hideElement');
@@ -29,8 +40,13 @@ const Lpage = () => {
 
     const sendData = async (e) => {
         e.preventDefault();
-
-        if (isValidData()) {
+        if (e.target.name === 'visitor_login') {
+            setData(() => ({
+                email: 'visitor@gmail.com',
+                password: 'visitor'
+            }))
+        }
+        if (e.target.name === 'visitor_login' || isValidData()) {
             try {
                 const response = await fetch(`${apiUrl}auth/user/login`, {
                     method: 'POST',
@@ -38,7 +54,7 @@ const Lpage = () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ data }),
+                    body: data.email !== '' ? JSON.stringify({ data }) : JSON.stringify({ data: { email: 'visitor@gmail.com', password: 'visitor' } }),
                 });
 
                 const result = await response.json();
@@ -154,6 +170,7 @@ const Lpage = () => {
                                 </div>
                             </div>
                             <div className="frm-group">
+                                <input type="submit" className="frm__btn-primary" id='visitor_login' name={'visitor_login'} value="Visitor  Login" onClick={sendData} />
                                 <input type="submit" className="frm__btn-primary" value="Log in" onClick={sendData} />
                                 <Link to='/user/signup' className="loginbtn frm__btn-primary" >Sign up</Link>
                             </div>

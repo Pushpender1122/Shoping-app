@@ -37,11 +37,11 @@ function AdminPanel() {
                         </div>
                         <h1 className="hidden sm:block text-xl font-bold mb-4 ">Admin Panel</h1>
                         <ul className="space-y-2 admin-path-list">
-                            <li><div onClick={() => { return handleMenuClick('home'), setPathList(null) }} className="block py-2 px-4 rounded hover:bg-gray-300 cursor-pointer" >Home</div></li>
-                            <li><div onClick={() => { return handleMenuClick('dashboard'), setPathList(null) }} className="block py-2 px-4 rounded hover:bg-gray-300 cursor-pointer" >Dashboard</div></li>
-                            <li><div onClick={() => { return handleMenuClick('products'), setPathList(null) }} className="block py-2 px-4 rounded hover:bg-gray-300 cursor-pointer">Products</div></li>
-                            <li><div onClick={() => { return handleMenuClick('customers'), setPathList(null) }} className="block py-2 px-4 rounded hover:bg-gray-300 cursor-pointer">Customers</div></li>
-                            <li><div onClick={() => { return handleMenuClick('transactions'), setPathList(null) }} className="block py-2 px-4 rounded hover:bg-gray-300 cursor-pointer">Transactions</div></li>
+                            <li><div onClick={() => { return handleMenuClick('home'), setPathList(null) }} className="block py-2 px-4 rounded hover:bg-gray-300 cursor-pointer" id='admin_home'>Home</div></li>
+                            <li><div onClick={() => { return handleMenuClick('dashboard'), setPathList(null) }} className="block py-2 px-4 rounded hover:bg-gray-300 cursor-pointer" id='admin_dashboard'>Dashboard</div></li>
+                            <li><div onClick={() => { return handleMenuClick('products'), setPathList(null) }} className="block py-2 px-4 rounded hover:bg-gray-300 cursor-pointer" id='admin_products'>Products</div></li>
+                            <li><div onClick={() => { return handleMenuClick('customers'), setPathList(null) }} className="block py-2 px-4 rounded hover:bg-gray-300 cursor-pointer" id='admin_customers'>Customers</div></li>
+                            <li><div onClick={() => { return handleMenuClick('transactions'), setPathList(null) }} className="block py-2 px-4 rounded hover:bg-gray-300 cursor-pointer" id='admin_transactions'>Transactions</div></li>
                         </ul>
                     </div>
                 </div>
@@ -110,17 +110,17 @@ function Dashboard() {
                 <p className='flex justify-center items-center'>₹{data?.amountEarned}</p>
             </div>
             <div className='flex justify-center mt-4 product_circle'>
-                <div className='h-36 w-36 rounded-full bg-red-400 flex items-center justify-center flex-col mx-6 product-details-admin'>
+                <div className='h-36 w-36 rounded-full bg-red-400 flex items-center justify-center flex-col mx-6 product-details-admin' id='product_count'>
                     <p className='flex justify-center items-center font-bold'>Product</p>
                     <p className='flex justify-center items-center font-bold '>{data?.productCount}</p>
                 </div>
 
-                <div className='h-36 w-36 rounded-full bg-amber-300 flex items-center justify-center flex-col mx-6 product-details-admin'>
+                <div className='h-36 w-36 rounded-full bg-amber-300 flex items-center justify-center flex-col mx-6 product-details-admin' id='order_count'>
                     <p className='flex justify-center items-center font-bold'>Orders</p>
                     <p className='flex justify-center items-center font-bold '>{data?.orderCount}</p>
                 </div>
 
-                <div className='h-36 w-36 rounded-full bg-black flex items-center justify-center flex-col mx-6 product-details-admin'>
+                <div className='h-36 w-36 rounded-full bg-black flex items-center justify-center flex-col mx-6 product-details-admin' id='user_count'>
                     <p className='flex justify-center items-center text-white font-bold '>User</p>
                     <p className='flex justify-center items-center text-white font-bold '>{data?.userCount}</p>
                 </div>
@@ -304,7 +304,7 @@ function Customers() {
         fetchData();
     }, [render]);
     useEffect(() => {
-        if (updatetedItem?.role === 'admin' || updatetedItem?.role === 'user') {
+        if (updatetedItem?.role === 'admin' || updatetedItem?.role === 'user' || updatetedItem?.role === 'visitor') {
             updateRole();
         }
         if (updatetedItem?.role === 'delete') {
@@ -410,6 +410,7 @@ function Customers() {
                                     >
                                         <option value="user">User</option>
                                         <option value="admin">Admin</option>
+                                        <option value="visitor">Visitor</option>
                                     </select>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">

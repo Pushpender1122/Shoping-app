@@ -23,7 +23,7 @@ const Header = () => {
     useEffect(() => {
         const cookie = Cookies.get('Auth');
         const userRole = Cookies.get('UserRole');
-        if (userRole === 'admin') {
+        if (userRole === 'admin' || userRole === 'visitor') {
             setCheckAdmin(true);
         }
         console.log(cookie);
@@ -31,8 +31,8 @@ const Header = () => {
         const handleClickOutside = (event) => {
             const dropdown = document.querySelector('.login-list');
             const menuCheckbox = document.getElementById('open-menu-login-account');
-            // console.log(event.target);
-            if (!menuCheckbox.contains(event.target) && !dropdown.contains(event.target)) {
+            const icon = document.querySelector('.fa-user-circle');
+            if (!menuCheckbox.contains(event.target) && !dropdown.contains(event.target) && !icon.contains(event.target)) {
                 setIsOpen(false);
             }
         };
@@ -149,13 +149,14 @@ const Header = () => {
                                 <ul className={`login-list ${isOpen ? '' : 'hidden'}`}>
                                     {cookiestate ? <Link className='login-a' to="/user/profile"><li className="login-list-item" onClick={() => setIsOpen(false)}>My account</li></Link> : null}
                                     {cookiestate ? null : <Link className='login-a' to="/user/signup"><li className="login-list-item">Create account</li></Link>}
+                                    {cookiestate ? null : <Link className='login-a' to="/user/login"><li className="login-list-item">Login account</li></Link>}
                                     {checkAdmin ? <Link className='login-a' to="/admin/dashboard"><li className="login-list-item">Admin Dashboard</li></Link> : null}
                                     {cookiestate ? <Link className='login-a' onClick={handleLogout}><li className="login-list-item">Logout</li></Link> : null}
                                 </ul>
                             </label>
                         </li>
-                        <li className="nav-content-item"><Link className="nav-content-link" to="/user/wishlist"><i className="fas fa-heart"></i></Link></li>
-                        <li className="nav-content-item"><Link className="nav-content-link" to="/product/cart"><i className="fas fa-shopping-cart"></i></Link></li>
+                        <li className="nav-content-item" id='wishlist'><Link className="nav-content-link" to="/user/wishlist"><i className="fas fa-heart"></i></Link></li>
+                        <li className="nav-content-item" id='product_cart'><Link className="nav-content-link" to="/product/cart"><i className="fas fa-shopping-cart"></i></Link></li>
                         {/* call to action */}
                     </ul>
                 </nav>
