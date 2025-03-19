@@ -10,7 +10,7 @@ import { Doughnut } from "react-chartjs-2";
 import { IoIosArrowDown } from "react-icons/io";
 import './admin.css'
 import { Link, useNavigate } from 'react-router-dom';
-
+import Cookies from 'js-cookie';
 
 
 const Url = process.env.REACT_APP_SERVER_URL;
@@ -212,42 +212,63 @@ function Products() {
     }, [alertMessage])
     return (
         <div id="products" className="p-4">
-            <div className='flex justify-between'>
+            <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center'>
                 <h2 className="text-2xl font-bold mb-4">Products</h2>
-                <Link to={'/admin/addproduct'} className="text-2xl font-bold mb-4 text-black hover:text-black">Add product</Link>
+                <Link to={'/admin/addproduct'} className="text-lg sm:text-2xl font-bold mb-4 text-black hover:text-black">Add product</Link>
             </div>
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photo</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {products.map(product => (
-                            <tr key={product._id}>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <img src={product.img[0]} alt={product.ProductName} className="h-10 w-10 object-contain" />
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">{product.ProductName}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{product.ProductPrice}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{product.Stock}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <button className="bg-blue-500 text-white px-4 py-2 rounded mx-2" onClick={() => handleManageClick(product._id)}>Edit</button>
-                                    <button className="bg-red-500 text-white px-4 py-2 rounded mx-2 hover:bg-red-600" onClick={() => handleDelete(product._id)}>Delete</button>
-                                </td>
-
+            <div className="overflow-y-auto max-h-[70vh]">
+                <div className="block w-full overflow-hidden">
+                    {/* Desktop view (hidden on mobile) */}
+                    <table className="min-w-full divide-y divide-gray-200 hidden md:table">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photo</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-            <div className='flex justify-center '>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {products.map(product => (
+                                <tr key={product._id}>
+                                    <td className="px-6 py-4">
+                                        <img src={product.img[0]} alt={product.ProductName} className="h-10 w-10 object-contain" />
+                                    </td>
+                                    <td className="px-6 py-4">{product.ProductName}</td>
+                                    <td className="px-6 py-4">{product.ProductPrice}</td>
+                                    <td className="px-6 py-4">{product.Stock}</td>
+                                    <td className="px-6 py-4">
+                                        <button className="bg-blue-500 text-white px-4 py-2 rounded mx-2" onClick={() => handleManageClick(product._id)}>Edit</button>
+                                        <button className="bg-red-500 text-white px-4 py-2 rounded mx-2 hover:bg-red-600" onClick={() => handleDelete(product._id)}>Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
 
+                    {/* Mobile view (shown only on mobile) */}
+                    <div className="md:hidden">
+                        {products.map(product => (
+                            <div key={product._id} className="bg-white mb-4 p-4 rounded shadow">
+                                <div className="flex items-center mb-3">
+                                    <img src={product.img[0]} alt={product.ProductName} className="h-16 w-16 object-contain mr-4" />
+                                    <div>
+                                        <h3 className="font-bold">{product.ProductName}</h3>
+                                        <p className="text-gray-600">${product.ProductPrice}</p>
+                                        <p className="text-sm text-gray-500">Stock: {product.Stock}</p>
+                                    </div>
+                                </div>
+                                <div className="flex justify-end mt-2">
+                                    <button className="bg-blue-500 text-white px-3 py-1 rounded mr-2 text-sm" onClick={() => handleManageClick(product._id)}>Edit</button>
+                                    <button className="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600" onClick={() => handleDelete(product._id)}>Delete</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+            <div className='flex justify-center mt-4'>
                 <GrLinkPrevious
                     className={`mx-5 cursor-pointer ${isPreviousDisabled ? 'opacity-50 pointer-events-none' : ''}`}
                     onClick={handlePreviousPage}
@@ -258,21 +279,22 @@ function Products() {
                     onClick={handleNextPage}
                     disabled={isNextDisabled}
                 />
-
             </div>
-            {showEdit && <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center">
-                <div className="bg-white p-8 rounded-lg shadow-lg">
+            {showEdit && <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
+                <div className="bg-white p-4 sm:p-8 rounded-lg shadow-lg w-full max-w-4xl mx-4 overflow-y-auto max-h-[90vh]">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-bold">Edit Product</h2>
-                        <button onClick={() => setEdit(null)}>&times;</button>
+                        <button onClick={() => setEdit(null)} className="text-2xl">&times;</button>
                     </div>
-                    <div className="flex">
-                        <div className="w-1/2 pr-8 flex flex-col items-center">
+                    <div className="flex flex-col md:flex-row">
+                        <div className="w-full md:w-1/2 pr-0 md:pr-8 flex flex-col items-center mb-4 md:mb-0">
                             <img src={editableItem.img[0]} alt={editableItem.productName} className="h-auto w-full mb-4" />
                             <p className="text-lg font-bold">{editableItem.ProductName}</p>
                             <p className="text-sm text-gray-500">${editableItem.ProductPrice}</p>
                         </div>
-                        <Addprodcut isFromProductUpdate={editableItem} apiUrl={`auth/admin/updateproduct/${editableItem._id}`} requestType={'PUT'} />
+                        <div className="w-full md:w-1/2">
+                            <Addprodcut isFromProductUpdate={editableItem} apiUrl={`auth/admin/updateproduct/${editableItem._id}`} requestType={'PUT'} />
+                        </div>
                     </div>
                 </div>
             </div>}
@@ -370,6 +392,14 @@ function Customers() {
     }
     const handleDeleteCustomer = (customerId) => {
         // Implement delete logic here
+        let role = Cookies.get('UserRole');
+        if (role === 'visitor' || role === 'user') {
+            setAlertConfig({
+                message: 'You are not authorized to delete',
+                messageType: 'error'
+            })
+            return
+        }
         const index = customers.findIndex(customer => customer._id === customerId);
         if (index !== -1) {
             setUpdatedItem({ userID: customerId, role: 'delete' });
@@ -383,46 +413,85 @@ function Customers() {
     return (
         <div id="customers" className="p-4">
             <h2 className="text-2xl font-bold mb-4">Customers</h2>
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avatar</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+            <div className="overflow-y-auto max-h-[70vh]">
+                <div className="block w-full overflow-hidden">
+                    {/* Desktop view (hidden on mobile) */}
+                    <table className="min-w-full divide-y divide-gray-200 hidden md:table">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avatar</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {customers?.map(customer => (
+                                <tr key={customer._id}>
+                                    <td className="px-6 py-4">
+                                        <img src={customer.img || 'https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg'} alt={customer.name} className="h-10 w-10 rounded-full object-cover" />
+                                    </td>
+                                    <td className="px-6 py-4">{customer.name}</td>
+                                    <td className="px-6 py-4">{customer.email}</td>
+                                    <td className="px-6 py-4">
+                                        <select
+                                            value={customer.role}
+                                            onChange={(e) => handleRoleChange(customer._id, e.target.value)}
+                                            className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                        >
+                                            <option value="user">User</option>
+                                            <option value="admin">Admin</option>
+                                            <option value="visitor">Visitor</option>
+                                        </select>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <button onClick={() => handleDeleteCustomer(customer._id)} className="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    {/* Mobile view (shown only on mobile) */}
+                    <div className="md:hidden space-y-4">
                         {customers?.map(customer => (
-                            <tr key={customer._id}>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <img src={customer.img || 'https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg'} alt={customer.name} className="h-10 w-10 rounded-full object-cover" />
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">{customer.name}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{customer.email}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">
+                            <div key={customer._id} className="bg-white p-4 rounded shadow">
+                                <div className="flex items-center mb-3">
+                                    <img
+                                        src={customer.img || 'https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg'}
+                                        alt={customer.name}
+                                        className="h-12 w-12 rounded-full object-cover mr-3"
+                                    />
+                                    <div>
+                                        <h3 className="font-bold">{customer.name}</h3>
+                                        <p className="text-sm text-gray-600">{customer.email}</p>
+                                    </div>
+                                </div>
+                                <div className="mt-3">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Role:</label>
                                     <select
                                         value={customer.role}
                                         onChange={(e) => handleRoleChange(customer._id, e.target.value)}
-                                        className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                        className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm mb-3"
                                     >
                                         <option value="user">User</option>
                                         <option value="admin">Admin</option>
                                         <option value="visitor">Visitor</option>
                                     </select>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <button onClick={() => handleDeleteCustomer(customer._id)} className="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
-                                </td>
-                            </tr>
+                                    <button
+                                        onClick={() => handleDeleteCustomer(customer._id)}
+                                        className="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
                         ))}
-                    </tbody>
-                </table>
+                    </div>
+                </div>
             </div>
-            <div className='flex justify-center '>
-
+            <div className='flex justify-center mt-4'>
                 <GrLinkPrevious
                     className={`mx-5 cursor-pointer ${isPreviousDisabled ? 'opacity-50 pointer-events-none' : ''}`}
                     onClick={handlePreviousPage}
@@ -433,8 +502,8 @@ function Customers() {
                     onClick={handleNextPage}
                     disabled={isNextDisabled}
                 />
-                <ToastContainer />
             </div>
+            <ToastContainer />
         </div>
     );
 }
@@ -519,74 +588,143 @@ function Transactions() {
     }, [alertMessage])
     return (
         <div id="transactions" className="p-4">
-            <div className='flex justify-between'>
+            <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center'>
                 <h2 className="text-2xl font-bold mb-4">Transactions</h2>
-                <h2 className='cursor-pointer' onClick={OrderViewChanger}>{isOrderChangeView == 'Shipped' ? 'Pending Order' : 'All Order'}</h2>
+                <h2 className='cursor-pointer text-blue-500 font-medium' onClick={OrderViewChanger}>
+                    {isOrderChangeView == 'Shipped' ? 'Pending Order' : 'All Order'}
+                </h2>
             </div>
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Discount</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {transactions.map(transaction => (
-
-                            <tr key={transaction._id}>
-                                <td className="px-6 py-4 whitespace-nowrap">{transaction?.items.productName}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{transaction?.items.price}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{transaction?.items?.discount || 0}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{transaction?.items?.quantity}</td>
-                                <td className={transaction?.orderStatus === 'Pending' ? "text-red-600 px-6 py-4 whitespace-nowrap" : "text-green-500 px-6 py-4 whitespace-nowrap"}>{transaction?.orderStatus}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <button onClick={() => handleManageClick(transaction._id)} className="bg-blue-500 text-white px-4 py-2 rounded">Manage</button>
-                                </td>
+            <div className="overflow-y-auto max-h-[70vh]">
+                <div className="block w-full overflow-hidden">
+                    {/* Desktop view (hidden on mobile) */}
+                    <table className="min-w-full divide-y divide-gray-200 hidden md:table">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Discount</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-            {selectedTransaction && (
-                <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white p-8 rounded-lg shadow-lg w-3/4 flex">
-                        <div className="w-1/2 pr-8 flex flex-col items-center">
-                            <img src={selectedTransaction.items.image} alt={selectedTransaction.items.productName} className="h-auto w-full mb-4" />
-                            <p className="text-lg font-bold">{selectedTransaction.items.productName}</p>
-                            <p className="text-sm text-gray-500">${selectedTransaction.items.price}</p>
-                        </div>
-                        <div className="w-1/2">
-                            <button className="absolute top-0 right-0 m-4" onClick={() => setSelectedTransaction(null)}>Close</button>
-                            <h3 className="text-xl font-bold mb-4">Order Information</h3>
-                            <div className="">
-                                <h1>User Info</h1>
-                                <p>Name : {selectedTransaction.userId.name}</p>
-                                <p>Address : {selectedTransaction.items.address}</p>
-                            </div>
-                            <div className="mb-2">
-                                <h1>Amount Info</h1>
-                                <p>Shipping Charges : 0</p>
-                                <p>Discount : {selectedTransaction.items.discount}</p>
-                                <p>Total : {selectedTransaction.items.total}</p>
-                            </div>
-                            <div className="my-3">
-                                <h1>Status Info</h1>
-                                <div className='flex'>
-                                    <p className='mr-2'>Status:</p>
-                                    <p className={selectedTransaction.orderStatus == 'Pending' ? "text-red-600" : "text-green-500"}> {selectedTransaction.orderStatus}</p>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {transactions.map(transaction => (
+                                <tr key={transaction._id}>
+                                    <td className="px-6 py-4">{transaction?.items.productName}</td>
+                                    <td className="px-6 py-4">{transaction?.items.price}</td>
+                                    <td className="px-6 py-4">{transaction?.items?.discount || 0}</td>
+                                    <td className="px-6 py-4">{transaction?.items?.quantity}</td>
+                                    <td className={transaction?.orderStatus === 'Pending' ? "text-red-600 px-6 py-4" : "text-green-500 px-6 py-4"}>
+                                        {transaction?.orderStatus}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <button onClick={() => handleManageClick(transaction._id)} className="bg-blue-500 text-white px-4 py-2 rounded">
+                                            Manage
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+                    {/* Mobile view (shown only on mobile) */}
+                    <div className="md:hidden space-y-4">
+                        {transactions.map(transaction => (
+                            <div key={transaction._id} className="bg-white p-4 rounded shadow">
+                                <div className="mb-3">
+                                    <h3 className="font-bold text-lg">{transaction?.items.productName}</h3>
+                                    <div className="flex justify-between items-center mt-2">
+                                        <span className="text-gray-700">Amount:</span>
+                                        <span className="font-medium">{transaction?.items.price}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center mt-1">
+                                        <span className="text-gray-700">Discount:</span>
+                                        <span>{transaction?.items?.discount || 0}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center mt-1">
+                                        <span className="text-gray-700">Quantity:</span>
+                                        <span>{transaction?.items?.quantity}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center mt-1">
+                                        <span className="text-gray-700">Status:</span>
+                                        <span className={transaction?.orderStatus === 'Pending' ? "text-red-600 font-medium" : "text-green-500 font-medium"}>
+                                            {transaction?.orderStatus}
+                                        </span>
+                                    </div>
                                 </div>
+                                <button
+                                    onClick={() => handleManageClick(transaction._id)}
+                                    className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-2"
+                                >
+                                    Manage
+                                </button>
                             </div>
-                            <button onClick={handleProcessStatus} disabled={selectedTransaction.orderStatus === 'Pending' ? false : true}>Process Status</button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {selectedTransaction && (
+                <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
+                    <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl relative">
+                        <button
+                            className="absolute top-0 right-0 m-4 text-gray-600 hover:text-gray-900 text-2xl"
+                            onClick={() => setSelectedTransaction(null)}
+                        >
+                            &times;
+                        </button>
+
+                        <div className="flex flex-col md:flex-row p-4 md:p-8">
+                            <div className="w-full md:w-1/2 md:pr-8 flex flex-col items-center mb-6 md:mb-0">
+                                <img src={selectedTransaction.items.image} alt={selectedTransaction.items.productName} className="h-auto w-full mb-4" />
+                                <p className="text-lg font-bold">{selectedTransaction.items.productName}</p>
+                                <p className="text-sm text-gray-500">${selectedTransaction.items.price}</p>
+                            </div>
+
+                            <div className="w-full md:w-1/2">
+                                <h3 className="text-xl font-bold mb-4">Order Information</h3>
+
+                                <div className="mb-4 p-3 bg-gray-50 rounded">
+                                    <h1 className="font-semibold text-gray-700 mb-2">User Info</h1>
+                                    <p className="mb-1">Name: {selectedTransaction.userId.name}</p>
+                                    <p>Address: {selectedTransaction.items.address}</p>
+                                </div>
+
+                                <div className="mb-4 p-3 bg-gray-50 rounded">
+                                    <h1 className="font-semibold text-gray-700 mb-2">Amount Info</h1>
+                                    <p className="mb-1">Shipping Charges: 0</p>
+                                    <p className="mb-1">Discount: {selectedTransaction.items.discount}</p>
+                                    <p>Total: {selectedTransaction.items.total}</p>
+                                </div>
+
+                                <div className="mb-4 p-3 bg-gray-50 rounded">
+                                    <h1 className="font-semibold text-gray-700 mb-2">Status Info</h1>
+                                    <div className='flex'>
+                                        <p className='mr-2'>Status:</p>
+                                        <p className={selectedTransaction.orderStatus == 'Pending' ? "text-red-600 font-medium" : "text-green-500 font-medium"}>
+                                            {selectedTransaction.orderStatus}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={handleProcessStatus}
+                                    disabled={selectedTransaction.orderStatus === 'Pending' ? false : true}
+                                    className={`w-full py-2 px-4 rounded text-white ${selectedTransaction.orderStatus === 'Pending'
+                                        ? 'bg-blue-500 hover:bg-blue-600'
+                                        : 'bg-gray-400 cursor-not-allowed'
+                                        }`}
+                                >
+                                    Process Status
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             )}
-            <div className='flex justify-center '>
+
+            <div className='flex justify-center mt-4'>
                 <GrLinkPrevious
                     className={`mx-5 cursor-pointer ${isPreviousDisabled ? 'opacity-50 pointer-events-none' : ''}`}
                     onClick={handlePreviousPage}
@@ -597,8 +735,8 @@ function Transactions() {
                     onClick={handleNextPage}
                     disabled={isNextDisabled}
                 />
-                <ToastContainer />
             </div>
+            <ToastContainer />
         </div>
     );
 }

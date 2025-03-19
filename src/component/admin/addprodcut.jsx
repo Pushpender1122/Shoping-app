@@ -144,7 +144,9 @@ function Addprodcut({ isFromProductUpdate, apiUrl, requestType }) {
                     onChange={handleInputChange}
                 />
                 <input type="file" name="img" multiple onChange={handleInputChange} />
-                <button type="submit">Upload</button>
+                <button type="submit" className='bg-slate-600 text-white py-2 px-4 rounded hover:bg-slate-700 transition duration-300'>
+                    {methodType === 'POST' ? 'Add Product' : 'Update Product'}
+                </button>
             </form>
             <ToastContainer />
         </div>
