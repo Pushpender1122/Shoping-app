@@ -587,18 +587,18 @@ function Transactions() {
         }
     }, [alertMessage])
     return (
-        <div id="transactions" className="p-4">
-            <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center'>
-                <h2 className="text-2xl font-bold mb-4">Transactions</h2>
+        <div id="transactions" className="p-4 flex flex-col h-full">
+            <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4'>
+                <h2 className="text-2xl font-bold mb-2 sm:mb-0">Transactions</h2>
                 <h2 className='cursor-pointer text-blue-500 font-medium' onClick={OrderViewChanger}>
                     {isOrderChangeView == 'Shipped' ? 'Pending Order' : 'All Order'}
                 </h2>
             </div>
-            <div className="overflow-y-auto max-h-[70vh]">
-                <div className="block w-full overflow-hidden">
+            <div className="overflow-y-auto flex-grow" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+                <div className="block w-full">
                     {/* Desktop view (hidden on mobile) */}
                     <table className="min-w-full divide-y divide-gray-200 hidden md:table">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-gray-50 sticky top-0">
                             <tr>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
@@ -667,7 +667,7 @@ function Transactions() {
 
             {selectedTransaction && (
                 <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl relative">
+                    <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl relative overflow-y-auto max-h-[90vh]">
                         <button
                             className="absolute top-0 right-0 m-4 text-gray-600 hover:text-gray-900 text-2xl"
                             onClick={() => setSelectedTransaction(null)}
