@@ -10,10 +10,16 @@ import { initializeHomeTour as homeTour, initializeLoginHomeTour as loginHomeTou
 const Homepage = () => {
     useEffect(() => {
         if (Cookies.get('Auth')) {
-            homeTour().drive()
+            if (!sessionStorage.getItem('homeTour')) {
+                homeTour().drive()
+                sessionStorage.setItem('homeTour', 'true')
+            }
         }
         else {
-            loginHomeTour().drive()
+            if (!sessionStorage.getItem('loginHomeTour')) {
+                loginHomeTour().drive()
+                sessionStorage.setItem('loginHomeTour', 'true')
+            }
         }
         return () => {
             if (Cookies.get('Auth')) {

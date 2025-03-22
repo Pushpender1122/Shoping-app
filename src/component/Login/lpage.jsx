@@ -12,7 +12,10 @@ import { initializeLoginTour as loginTour } from '../configs/tour';
 const Lpage = () => {
     // const loginDriver = driver(loginTourConfig)
     useEffect(() => {
-        loginTour().drive()
+        if (!sessionStorage.getItem('loginTour')) {
+            loginTour().drive()
+            sessionStorage.setItem('loginTour', 'true')
+        }
         return () => {
             loginTour().destroy()
         }

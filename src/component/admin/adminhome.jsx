@@ -4,7 +4,10 @@ import { initializeAdminTour } from '../configs/tour'
 const Adminhome = () => {
     const [pathList, setPathList] = useState(null);
     useEffect(() => {
-        initializeAdminTour().drive()
+        if (!sessionStorage.getItem('adminTour')) {
+            initializeAdminTour().drive()
+            sessionStorage.setItem('adminTour', 'true')
+        }
         document.addEventListener('driver-move-next', () => {
             if (initializeAdminTour) {
                 setPathList('admin-panel')
