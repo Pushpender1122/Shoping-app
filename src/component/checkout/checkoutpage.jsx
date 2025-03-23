@@ -80,9 +80,17 @@ const CheckoutPage = ({ isPopupOpen, setPopupOpen, grandTotal }) => {
             // alert('Please login first');
             return;
         }
-        const response = await axios.post(`${apiUrl}order`, { amount: grandTotal * 100 }, { withCredentials: true });
-        console.log(response.data);
-        payment(response.data.order_id, response.data.amount, response.data.currency);
+        try {
+            const response = await axios.post(`${apiUrl}order`, { cartItem }, { withCredentials: true });
+            console.log(response.data);
+            payment(response.data.order_id, response.data.amount, response.data.currency);
+        }
+        catch (error) {
+            setAlertMessage({
+                alertType: "error",
+                alertMessage: "Something went wrong"
+            })
+        }
     }
     const handleCheckout = async (razorpay_order_id, razorpay_payment_id, razorpay_signature) => {
         const userId = Cookies.get('UserId') || null;
@@ -192,11 +200,11 @@ const CheckoutPage = ({ isPopupOpen, setPopupOpen, grandTotal }) => {
                         <ul>
                             {addressList.map((add, index) => (
                                 <li key={index} onClick={() => handleAddressSelect(add.address)} className="cursor-pointer flex justify-between items-center py-2 px-4 border-b border-gray-200">
-                                    <div>
+                                    <div onClick={creatOrder}>
                                         <span className="font-bold">{add.label}: </span>
                                         <span>{add.address}</span>
                                     </div>
-                                    <div className="text-blue-500" onClick={creatOrder}>Select</div>
+                                    <div className="text-blue-500" >Select</div>
                                 </li>
                             ))}
                             <Link to={'/user/profile'}>Add new address</Link>
