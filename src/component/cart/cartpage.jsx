@@ -76,6 +76,7 @@ function ShoppingCart() {
     const [data, setData] = useState([]);
     const [userId, setuserId] = useState(null);
     const [isPopupOpen, setPopupOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [alertoption, setAlertMessage] = useState({
         alertType: "info",
         alertMessage: ""
@@ -151,6 +152,7 @@ function ShoppingCart() {
         const getTheCartList = async () => {
             try {
                 const data = await axios.post(`${apiUrl}cartList`, cartItem);
+                setLoading(false);
                 setData(data.data);
                 console.log("req");
                 console.log(data.data);
@@ -308,6 +310,11 @@ function ShoppingCart() {
             {((localStorage.getItem('TempCart') === null || JSON.parse(localStorage.getItem('TempCart')).length === 0) && (localStorage.getItem(`CartList_${userId}`) === null || JSON.parse(localStorage.getItem(`CartList_${userId}`)).length === 0))
                 ? (
                     <EmptyCart />
+                ) : loading ? (
+                    <div className="flex justify-center items-center h-64">
+                        <img src="/loader.gif" className='h-56 w-auto mix-blend-multiply m-auto' alt="" />
+                        {/* <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600"></div> */}
+                    </div>
                 ) : ((cartItem.length > 0 && data.length > 0) &&
                     <div className="shopping-cart mx-28">
                         <h1 className='h1'>Shopping Cart</h1>
